@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetManagerCore", "SnippetManagerCore\SnippetManagerCore.csproj", "{86C7FABC-8872-4803-9B98-5DE92412A6BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C799B45F-D591-42E2-A842-97EF8E1D6987}"
+	ProjectSection(SolutionItems) = preProject
+		design.md = design.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetManagerGuiAppWPF", "SnippetManagerGuiApp\SnippetManagerGuiAppWPF.csproj", "{3C1F88DF-65A3-4631-830A-9A897018F209}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnippetManagerGuiAppWinForms", "SnippetManagerGuiAppWinForms\SnippetManagerGuiAppWinForms.csproj", "{3F1DE370-6F24-47ED-BEC5-8AAE228452EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86C7FABC-8872-4803-9B98-5DE92412A6BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C7FABC-8872-4803-9B98-5DE92412A6BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C7FABC-8872-4803-9B98-5DE92412A6BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C7FABC-8872-4803-9B98-5DE92412A6BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C1F88DF-65A3-4631-830A-9A897018F209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C1F88DF-65A3-4631-830A-9A897018F209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C1F88DF-65A3-4631-830A-9A897018F209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C1F88DF-65A3-4631-830A-9A897018F209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F1DE370-6F24-47ED-BEC5-8AAE228452EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F1DE370-6F24-47ED-BEC5-8AAE228452EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F1DE370-6F24-47ED-BEC5-8AAE228452EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F1DE370-6F24-47ED-BEC5-8AAE228452EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33BCFE2B-3866-4897-A9D2-C2B654DD0D7F}
+	EndGlobalSection
+EndGlobal
