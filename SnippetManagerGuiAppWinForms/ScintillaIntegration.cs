@@ -34,13 +34,5 @@ namespace SnippetManagerGuiAppWinForms
         {
             base.WndProc(ref m);
         }
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (hModule != IntPtr.Zero)
-            {
-                FreeLibrary(hModule);
-            }
-        }
     }
 }

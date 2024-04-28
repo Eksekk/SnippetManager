@@ -14,6 +14,7 @@ namespace SnippetManagerGuiAppWinForms
         private Dictionary<int, CodeSnippet> IndexDataViewRowToSnippet = new();
         private SnippetList Snippets = new();
         readonly int COLUMN_INDEX_TYPES;
+        BindingSource BindingSourceSnippetList;
         public MainWindow()
         {
             Snippets.Add(new()
@@ -46,7 +47,12 @@ namespace SnippetManagerGuiAppWinForms
                 Lang = SnippetLanguage.Java,
                 Complexity = SnippetComplexity.Low,
                 Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "System.out.println(\"Hello, World!\");"
+                Content = "System.out.println(\"Hello, World!\");",
+                ExtendedDesc = new SnippetExtendedDescription()
+                {
+                    Description = "This is a simple snippet to print 'Hello, World!' to the console",
+                    Urls = new() { "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program" }
+                }
             });
             Snippets.Add(new()
             {
@@ -71,9 +77,9 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             InitializeComponent();
 
             InitializeComboBoxes();
-            BindingSource bs = new() { DataSource = Snippets };
+            BindingSourceSnippetList = new() { DataSource = Snippets };
             DataViewSnippetList.AutoGenerateColumns = false; // by default all object properties are shown, and I want only some, so have to add columns manually
-            DataViewSnippetList.DataSource = bs;
+            DataViewSnippetList.DataSource = BindingSourceSnippetList;
             DataViewSnippetList.Columns.Add(new DataGridViewTextBoxColumn()
             {
                 DataPropertyName = "Name",
@@ -105,7 +111,18 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                 }
             };
 
-            // setup handler to update code snippet in editor when new one is selected in table
+            // update snippet text before selecting another row in table
+            DataViewSnippetList.RowLeave += (sender, e) =>
+            {
+                if (DataViewSnippetList.SelectedRows.Count == 0)
+                {
+                    return;
+                }
+                CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+                snip.Content = TextBoxCodeViewerEditor.Text;
+            };
+
+            // update code snippet in editor when new one is selected in table
             DataViewSnippetList.SelectionChanged += (sender, e) =>
             {
                 if (DataViewSnippetList.SelectedRows.Count == 0)
@@ -114,11 +131,16 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                 }
                 CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
                 TextBoxCodeViewerEditor.Text = snip.Content;
+                ButtonInfo.Enabled = snip.ExtendedDesc is not null;
             };
 
             loadToolStripMenuItem.Click += (sender, e) => LoadFromFile();
             saveToolStripMenuItem.Click += (sender, e) => SaveToFile();
             aboutToolStripMenuItem.Click += (sender, e) => About();
+
+            ButtonClone.Click += (sender, e) => CloneSelectedSnippet();
+            ButtonDelete.Click += (sender, e) => DeleteSelectedSnippet();
+            ButtonInfo.Click += (sender, e) => ViewMoreInfo();
         }
 
         private void InitializeComboBoxes()
@@ -228,6 +250,52 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                 catch (SnippetSavingException e)
                 {
                     MessageBox.Show($"Error while saving snippets to file: {e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void CloneSelectedSnippet()
+        {
+            if (DataViewSnippetList.SelectedRows.Count > 0)
+            {
+                var snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+                DataViewSnippetList.SelectedRows[0].Selected = false;
+                var clonedSnip = snip.Clone();
+                Snippets.Add(clonedSnip);
+                BindingSourceSnippetList.ResetBindings(false); // this will update the control (DataGridView) with new data (cloned snippet)
+
+                foreach (DataGridViewRow r in DataViewSnippetList.Rows)
+                {
+                    if (object.ReferenceEquals(r.DataBoundItem, clonedSnip))
+                    {
+                        r.Selected = true;
+                        DataViewSnippetList.FirstDisplayedScrollingRowIndex = r.Index;
+                        return;
+                    }
+                }
+                Debug.Fail("No matching row found after cloning snippet and updating the control");
+            }
+        }
+
+        private void DeleteSelectedSnippet()
+        {
+            if (DataViewSnippetList.SelectedRows.Count > 0)
+            {
+                var snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+                Snippets.Remove(snip);
+                BindingSourceSnippetList.ResetBindings(false);
+            }
+        }
+
+        private void ViewMoreInfo()
+        {
+            if (DataViewSnippetList.SelectedRows.Count > 0)
+            {
+                var snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+                if (snip.ExtendedDesc is not null)
+                {
+                    string desc = snip.ExtendedDesc.Value.Description + "\n\nInformation URLs:\n" + string.Join("\n", snip.ExtendedDesc.Value.Urls);
+                    MessageBox.Show(desc, $"Extended Description of snippet '{snip.Name}'", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }

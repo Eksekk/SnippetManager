@@ -59,5 +59,19 @@ namespace SnippetManagerCore
         public bool IsRunnable { get; set; }
 
         public override string ToString() => Tools.GenericClassObjectInfoToString(this, Color.Black);
+
+        public CodeSnippet Clone()
+        {
+            return new CodeSnippet
+            {
+                Lang = Lang,
+                Complexity = Complexity,
+                Types = new List<SnippetType>(Types),
+                Name = Name,
+                Content = Content,
+                ExtendedDesc = ExtendedDesc,
+                IsRunnable = IsRunnable
+            };
+        }
     }
 }

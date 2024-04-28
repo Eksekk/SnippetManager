@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             TextBoxCodeViewerEditor = new RichTextBox();
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
@@ -54,6 +55,10 @@
             ComboBoxFilterLanguage = new ComboBox();
             LabelFilterLanguage = new Label();
             DataViewSnippetList = new DataGridView();
+            ButtonClone = new Button();
+            MyToolTip = new ToolTip(components);
+            ButtonDelete = new Button();
+            ButtonInfo = new Button();
             menuStrip1.SuspendLayout();
             GroupBoxFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataViewSnippetList).BeginInit();
@@ -62,7 +67,7 @@
             // TextBoxCodeViewerEditor
             // 
             TextBoxCodeViewerEditor.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxCodeViewerEditor.Location = new Point(462, 102);
+            TextBoxCodeViewerEditor.Location = new Point(462, 138);
             TextBoxCodeViewerEditor.Name = "TextBoxCodeViewerEditor";
             TextBoxCodeViewerEditor.Size = new Size(638, 292);
             TextBoxCodeViewerEditor.TabIndex = 0;
@@ -269,11 +274,45 @@
             DataViewSnippetList.Size = new Size(444, 382);
             DataViewSnippetList.TabIndex = 3;
             // 
+            // ButtonClone
+            // 
+            ButtonClone.Location = new Point(591, 102);
+            ButtonClone.Name = "ButtonClone";
+            ButtonClone.Size = new Size(129, 23);
+            ButtonClone.TabIndex = 4;
+            ButtonClone.Text = "Clone";
+            MyToolTip.SetToolTip(ButtonClone, "Clones currently selected snippet, so you can change it without affecting original snippet");
+            ButtonClone.UseVisualStyleBackColor = true;
+            // 
+            // ButtonDelete
+            // 
+            ButtonDelete.ForeColor = Color.Red;
+            ButtonDelete.Location = new Point(726, 102);
+            ButtonDelete.Name = "ButtonDelete";
+            ButtonDelete.Size = new Size(126, 23);
+            ButtonDelete.TabIndex = 5;
+            ButtonDelete.Text = "Delete";
+            MyToolTip.SetToolTip(ButtonDelete, "Deletes currently selected snippet");
+            ButtonDelete.UseVisualStyleBackColor = true;
+            // 
+            // ButtonInfo
+            // 
+            ButtonInfo.Location = new Point(462, 102);
+            ButtonInfo.Name = "ButtonInfo";
+            ButtonInfo.Size = new Size(123, 23);
+            ButtonInfo.TabIndex = 6;
+            ButtonInfo.Text = "More information";
+            MyToolTip.SetToolTip(ButtonInfo, "Shows more information about selected snippet, if it is available");
+            ButtonInfo.UseVisualStyleBackColor = true;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1139, 496);
+            Controls.Add(ButtonInfo);
+            Controls.Add(ButtonDelete);
+            Controls.Add(ButtonClone);
             Controls.Add(DataViewSnippetList);
             Controls.Add(GroupBoxFilters);
             Controls.Add(TextBoxCodeViewerEditor);
@@ -318,5 +357,9 @@
         private Label LabelFilterComplexity;
         private Label LabelFilterVerticalLine2;
         private DataGridView DataViewSnippetList;
+        private Button ButtonClone;
+        private ToolTip MyToolTip;
+        private Button ButtonDelete;
+        private Button ButtonInfo;
     }
 }
