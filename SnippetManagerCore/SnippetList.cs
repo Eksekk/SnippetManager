@@ -60,15 +60,63 @@ namespace SnippetManagerCore
             return this.Where(s => s.Complexity == complexity);
         }
 
-        public IEnumerable<CodeSnippet> FindSnippetsBy(SnippetType[]? findTypes = null, SnippetLanguage? findLang = null, SnippetComplexity? findComplexity = null)
+        public record FindSnippetByOptions
         {
-            Func<CodeSnippet, bool> checkTypes = s => findTypes == null || findTypes.Any(t => t == SnippetType.Any || s.Types.Contains(t));
-            return this.Where(snip => checkTypes(snip) && (findLang == null || findLang == SnippetLanguage.All || snip.Lang == findLang) && (findComplexity == null || findComplexity == SnippetComplexity.Any || snip.Complexity == findComplexity));
+            public string? Name;
+            public SnippetType[]? Types;
+            public SnippetLanguage? Lang;
+            public SnippetComplexity? Complexity;
+            public ThreeValueEnum IsRunnable;
+            public ThreeValueEnum HasExtendedDescription;
+            // helper property to allow setting 'Type' property without creating an array
+            public SnippetType Type {
+                set
+                {
+                    if (Types is not null)
+                    {
+                        throw new InvalidOperationException("Cannot set 'Type' property when 'Types' is already set");
+                    }
+                    Types = new SnippetType[] { value };
+                }
+            }
+
+            public FindSnippetByOptions(string? Name = null, SnippetType[]? Types = null, SnippetLanguage? Lang = null, SnippetComplexity? Complexity = null, ThreeValueEnum IsRunnable = ThreeValueEnum.Any, ThreeValueEnum HasExtendedDescription = ThreeValueEnum.Any)
+            {
+                this.Name = Name;
+                this.Types = Types;
+                this.Lang = Lang;
+                this.Complexity = Complexity;
+                this.IsRunnable = IsRunnable;
+                this.HasExtendedDescription = HasExtendedDescription;
+            }
+
+            // this one requires to provide Name parameter in addition to Type, because Type can't be optional (due to ambiguity with the other constructor), and so Name needs to be mandatory as well, because optional parameters can't be used before required ones
+            public FindSnippetByOptions(string Name, SnippetType Type, SnippetLanguage? Lang = null, SnippetComplexity? Complexity = null, ThreeValueEnum IsRunnable = ThreeValueEnum.Any, ThreeValueEnum HasExtendedDescription = ThreeValueEnum.Any)
+                : this(Name, new SnippetType[] { Type }, Lang, Complexity, IsRunnable, HasExtendedDescription) { }
+
+            // allows unpacking this record into multiple variables with one statement
+            public void Deconstruct(out string? Name, out SnippetType[]? findTypes, out SnippetLanguage? findLang, out SnippetComplexity? findComplexity, out ThreeValueEnum isRunnable, out ThreeValueEnum hasExtendedDescription)
+            {
+                Name = this.Name;
+                findTypes = this.Types;
+                findLang = this.Lang;
+                findComplexity = this.Complexity;
+                isRunnable = this.IsRunnable;
+                hasExtendedDescription = this.HasExtendedDescription;
+            }
         }
 
-        public IEnumerable<CodeSnippet> FindSnippetsBy(SnippetType? findType, SnippetLanguage? findLang = null, SnippetComplexity? findComplexity = null)
+        public IEnumerable<CodeSnippet> FindSnippetsBy(FindSnippetByOptions opt)
         {
-            return FindSnippetsBy(new[] {findType ?? SnippetType.Any}, findLang, findComplexity);
+            var (Name, findTypes, findLang, findComplexity, isRunnable, hasExtendedDescription) = opt;
+            Func<CodeSnippet, bool> checkTypes = s => findTypes == null || findTypes.Any(t => t == SnippetType.Any || s.Types.Contains(t));
+            return this
+                .Where(snip => Name is null || snip.Name.ToLower().Contains(Name.ToLower()))
+                .Where(checkTypes)
+                .Where(snip => findLang == null || findLang == SnippetLanguage.All || snip.Lang == findLang)
+                .Where(snip => findComplexity == null || findComplexity == SnippetComplexity.Any || snip.Complexity == findComplexity)
+                .Where(snip => isRunnable == ThreeValueEnum.Any || (isRunnable == ThreeValueEnum.Yes && snip.IsRunnable) || (isRunnable == ThreeValueEnum.No && !snip.IsRunnable))
+                .Where(snip => hasExtendedDescription == ThreeValueEnum.Any || (hasExtendedDescription == ThreeValueEnum.Yes && snip.ExtendedDesc is not null) || (hasExtendedDescription == ThreeValueEnum.No && snip.ExtendedDesc is null));
         }
 
         public SnippetList() : base() { }

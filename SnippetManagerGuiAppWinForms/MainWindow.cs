@@ -14,7 +14,7 @@ namespace SnippetManagerGuiAppWinForms
         private Dictionary<int, CodeSnippet> IndexDataViewRowToSnippet = new();
         private SnippetList Snippets = new();
         readonly int COLUMN_INDEX_TYPES;
-        BindingSource BindingSourceSnippetList;
+        readonly BindingSource BindingSourceSnippetList;
         public MainWindow()
         {
             Snippets.Add(new()
@@ -102,37 +102,13 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             });
 
             // setup handler to show collection's elements instead of "(Collection)" text
-            DataViewSnippetList.CellFormatting += (sender, e) =>
-            {
-                if (e.ColumnIndex == COLUMN_INDEX_TYPES)
-                {
-                    e.Value = Tools.StringizeSingleParameter(e.Value);
-                    e.FormattingApplied = true;
-                }
-            };
+            DataViewSnippetList.CellFormatting += CellFormatting;
 
             // update snippet text before selecting another row in table
-            DataViewSnippetList.RowLeave += (sender, e) =>
-            {
-                if (DataViewSnippetList.SelectedRows.Count == 0)
-                {
-                    return;
-                }
-                CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
-                snip.Content = TextBoxCodeViewerEditor.Text;
-            };
+            DataViewSnippetList.RowLeave += RowLeave;
 
             // update code snippet in editor when new one is selected in table
-            DataViewSnippetList.SelectionChanged += (sender, e) =>
-            {
-                if (DataViewSnippetList.SelectedRows.Count == 0)
-                {
-                    return;
-                }
-                CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
-                TextBoxCodeViewerEditor.Text = snip.Content;
-                ButtonInfo.Enabled = snip.ExtendedDesc is not null;
-            };
+            DataViewSnippetList.SelectionChanged += SelectionChanged;
 
             loadToolStripMenuItem.Click += (sender, e) => LoadFromFile();
             saveToolStripMenuItem.Click += (sender, e) => SaveToFile();
@@ -141,6 +117,21 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             ButtonClone.Click += (sender, e) => CloneSelectedSnippet();
             ButtonDelete.Click += (sender, e) => DeleteSelectedSnippet();
             ButtonInfo.Click += (sender, e) => ViewMoreInfo();
+
+            ButtonAddSnippet.Click += (sender, e) => throw new NotImplementedException("Advanced adding of new snippets is not implemented yet");
+            ButtonEditSelectedSnippet.Click += (sender, e) => throw new NotImplementedException("Advanced editing of snippets is not implemented yet");
+
+            RadioButtonFilterHasExtendedDescriptionAny.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterHasExtendedDescriptionYes.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterHasExtendedDescriptionNo.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterIsRunnableAny.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterIsRunnableYes.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterIsRunnableNo.CheckedChanged += (sender, e) => ApplyFilters();
+
+            TextboxFilterName.TextChanged += (sender, e) => ApplyFilters();
+
+            ShowMoreFiltersCheckStateChanged();
+            CheckboxFilterShowMore.CheckedChanged += (sender, e) => ShowMoreFiltersCheckStateChanged();
         }
 
         private void InitializeComboBoxes()
@@ -176,12 +167,28 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
 
         private void ApplyFilters()
         {
+            Func<RadioButton, RadioButton, ThreeValueEnum> ThreeRadioGroupToEnum = (yes, no) =>
+            {
+                if (yes.Checked)
+                {
+                    return ThreeValueEnum.Yes;
+                }
+                if (no.Checked)
+                {
+                    return ThreeValueEnum.No;
+                }
+                return ThreeValueEnum.Any;
+            };
             // clear items
-            var showSnippets = Snippets.FindSnippetsBy(
-                                              IndexToSnippetTypeDict[ComboBoxFilterType.SelectedIndex],
-                               IndexToSnippetLanguageDict[ComboBoxFilterLanguage.SelectedIndex],
-                                                             IndexToSnippetComplexityDict[ComboBoxFilterComplexity.SelectedIndex]
-                                                                        );
+            var showSnippets = Snippets.FindSnippetsBy(new()
+            {
+                Name = TextboxFilterName.Text,
+                Type = IndexToSnippetTypeDict[ComboBoxFilterType.SelectedIndex],
+                Lang = IndexToSnippetLanguageDict[ComboBoxFilterLanguage.SelectedIndex],
+                Complexity = IndexToSnippetComplexityDict[ComboBoxFilterComplexity.SelectedIndex],
+                IsRunnable = ThreeRadioGroupToEnum(RadioButtonFilterIsRunnableYes, RadioButtonFilterIsRunnableNo),
+                HasExtendedDescription = ThreeRadioGroupToEnum(RadioButtonFilterHasExtendedDescriptionYes, RadioButtonFilterHasExtendedDescriptionNo)
+            });
             HashSet<CodeSnippet> rowsToShow = new(showSnippets);
             foreach (DataGridViewRow row in DataViewSnippetList.Rows)
             {
@@ -211,7 +218,9 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                         {
                             DataViewSnippetList.Rows[selectedIndex].Selected = false;
                         }
+                        Snippets.Clear();
                         Snippets.LoadFromFile(ofd.FileName);
+                        BindingSourceSnippetList.ResetBindings(false);
                         ApplyFilters();
                     }
                     catch (SnippetLoadingException e)
@@ -283,6 +292,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             {
                 var snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
                 Snippets.Remove(snip);
+                DataViewSnippetList.SelectedRows[0].Selected = false; // need to deselect manually to not cause exception when deleting last row
                 BindingSourceSnippetList.ResetBindings(false);
             }
         }
@@ -298,6 +308,47 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                     MessageBox.Show(desc, $"Extended Description of snippet '{snip.Name}'", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+
+        private void CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == COLUMN_INDEX_TYPES)
+            {
+                e.Value = Tools.StringizeSingleParameter(e.Value);
+                e.FormattingApplied = true;
+            }
+        }
+
+        private void RowLeave(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (DataViewSnippetList.SelectedRows.Count == 0)
+            {
+                return;
+            }
+            CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+            snip.Content = TextBoxCodeViewerEditor.Text;
+        }
+
+        private void SelectionChanged(object? sender, EventArgs e)
+        {
+            if (DataViewSnippetList.SelectedRows.Count == 0)
+            {
+                return;
+            }
+            CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+            TextBoxCodeViewerEditor.Text = snip.Content;
+            ButtonInfo.Enabled = snip.ExtendedDesc is not null;
+        }
+
+        private void ShowMoreFiltersCheckStateChanged()
+        {
+            bool show = CheckboxFilterShowMore.Checked;
+            LabelFiltersHorizontalLine1.Visible = show;
+            LabelFilterVerticalLine4.Visible = show;
+            GroupBoxFilterHasExtendedDescription.Visible = show;
+            GroupBoxFilterIsRunnable.Visible = show;
+
+            //GroupBoxFilters.Resize
         }
     }
 }

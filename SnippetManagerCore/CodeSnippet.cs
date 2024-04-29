@@ -3,6 +3,12 @@ using System.Drawing;
 
 namespace SnippetManagerCore
 {
+    public enum ThreeValueEnum
+    {
+        Any,
+        Yes,
+        No
+    }
     public enum SnippetLanguage
     {
         All,
