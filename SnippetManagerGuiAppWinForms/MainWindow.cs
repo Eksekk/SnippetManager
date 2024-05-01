@@ -114,8 +114,8 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             ButtonDelete.Click += (sender, e) => DeleteSelectedSnippet();
             ButtonInfo.Click += (sender, e) => ViewMoreInfo();
 
-            ButtonAddSnippet.Click += (sender, e) => throw new NotImplementedException("Advanced adding of new snippets is not implemented yet");
-            ButtonEditSelectedSnippet.Click += (sender, e) => throw new NotImplementedException("Advanced editing of snippets is not implemented yet");
+            ButtonAddSnippet.Click += (sender, e) => AddSnippet();
+            ButtonEditSelectedSnippet.Click += (sender, e) => EditSnippet();
 
             RadioButtonFilterHasExtendedDescriptionAny.CheckedChanged += (sender, e) => ApplyFilters();
             RadioButtonFilterHasExtendedDescriptionYes.CheckedChanged += (sender, e) => ApplyFilters();
@@ -132,43 +132,19 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
 
         private void InitializeComboBoxes()
         {
-            Dictionary<SnippetLanguage, string> langValues = new()
-            {
-                { SnippetLanguage.All, "All" },
-                { SnippetLanguage.Csharp, "C#" },
-                { SnippetLanguage.Cpp, "C++" },
-                { SnippetLanguage.Lua, "Lua" },
-                { SnippetLanguage.Python, "Python" },
-                { SnippetLanguage.Java, "Java" },
-            };
+            Dictionary<SnippetLanguage, string> langValues = EnumHelpers.GetValuesWithNames<SnippetLanguage>();
             ComboBoxFilterLanguage.DataSource = new BindingSource(langValues, null);
             ComboBoxFilterLanguage.DisplayMember = "Value";
             ComboBoxFilterLanguage.ValueMember = "Key";
             ComboBoxFilterLanguage.SelectedIndex = 0;
 
-            Dictionary<SnippetType, string> typeValues = new()
-            {
-                { SnippetType.Any, "Any" },
-                { SnippetType.Syntax, "Syntax" },
-                { SnippetType.StandardLibrary, "Standard Library" },
-                { SnippetType.LanguageFeature, "Language Feature" },
-                { SnippetType.Algorithm, "Algorithm" },
-                { SnippetType.DataStructure, "Data Structure" },
-            };
+            Dictionary<SnippetType, string> typeValues = EnumHelpers.GetValuesWithNames<SnippetType>();
             ComboBoxFilterType.DataSource = new BindingSource(typeValues, null);
             ComboBoxFilterType.DisplayMember = "Value";
             ComboBoxFilterType.ValueMember = "Key";
             ComboBoxFilterType.SelectedIndex = 0;
 
-            Dictionary<SnippetComplexity, string> complexityValues = new()
-            {
-                { SnippetComplexity.Any, "Any" },
-                { SnippetComplexity.Low, "Low" },
-                { SnippetComplexity.MediumLow, "Medium Low" },
-                { SnippetComplexity.Medium, "Medium" },
-                { SnippetComplexity.MediumHigh, "Medium High" },
-                { SnippetComplexity.High, "High" },
-            };
+            Dictionary<SnippetComplexity, string> complexityValues = EnumHelpers.GetValuesWithNames<SnippetComplexity>();
             ComboBoxFilterComplexity.DataSource = new BindingSource(complexityValues, null);
             ComboBoxFilterComplexity.DisplayMember = "Value";
             ComboBoxFilterComplexity.ValueMember = "Key";
@@ -361,8 +337,42 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             LabelFilterVerticalLine4.Visible = show;
             GroupBoxFilterHasExtendedDescription.Visible = show;
             GroupBoxFilterIsRunnable.Visible = show;
+        }
 
-            //GroupBoxFilters.Resize
+        private void AddSnippet()
+        {
+            AddEditSnippetWindow w = new();
+            var result = w.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                Snippets.Add(w.CodeSnippet!);
+                BindingSourceSnippetList.ResetBindings(false);
+                // select newly added
+                foreach (DataGridViewRow r in DataViewSnippetList.Rows)
+                {
+                    // this deselects any (should be at most one) currently selected row, then selects the newly added one if it's found
+                    if (object.ReferenceEquals(r.DataBoundItem, w.CodeSnippet))
+                    {
+                        r.Selected = true;
+                        DataViewSnippetList.FirstDisplayedScrollingRowIndex = r.Index;
+                    }
+                    else
+                    {
+                        r.Selected = false;
+                    }
+                }
+            }
+        }
+
+        private void EditSnippet()
+        {
+            if (DataViewSnippetList.SelectedRows.Count == 0)
+            {
+                return;
+            }
+            CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+            AddEditSnippetWindow w = new(snip);
+            var result = w.ShowDialog();
         }
     }
 }

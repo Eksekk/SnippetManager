@@ -9,10 +9,13 @@ namespace SnippetManagerCore
         Yes,
         No
     }
+
     public enum SnippetLanguage
     {
         All,
+        [EnumText("C#")]
         Csharp,
+        [EnumText("C++")]
         Cpp,
         Lua,
         Python,
@@ -22,8 +25,10 @@ namespace SnippetManagerCore
     {
         Any,
         Low,
+        [EnumText("Medium-low")]
         MediumLow,
         Medium,
+        [EnumText("Medium-high")]
         MediumHigh,
         High
     }
@@ -32,10 +37,15 @@ namespace SnippetManagerCore
     {
         Any,
         Syntax,
+        [EnumText("Standard library")]
         StandardLibrary,
+        [EnumText("Language feature")]
         LanguageFeature,
         Algorithm,
+        [EnumText("Data structure")]
         DataStructure,
+        [EnumText("Design pattern")]
+        DesignPattern,
     }
     // will contain extended description (very long one, which will be displayed in a separate window), and some helpful information urls for special handling (for example, to easily make links clickable)
     public struct SnippetExtendedDescription

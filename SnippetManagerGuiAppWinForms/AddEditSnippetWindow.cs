@@ -19,5 +19,11 @@ namespace SnippetManagerGuiAppWinForms
         }
 
         public CodeSnippet? CodeSnippet { get; set; }
+
+        // constructor used for editing existing snippet
+        public AddEditSnippetWindow(CodeSnippet s)
+        {
+            CodeSnippet = s;
+        }
     }
 }
