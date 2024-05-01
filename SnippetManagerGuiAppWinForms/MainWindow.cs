@@ -342,7 +342,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
         private void AddSnippet()
         {
             AddEditSnippetWindow w = new();
-            var result = w.ShowDialog();
+            var result = w.ShowAddDialog();
             if (result == DialogResult.OK)
             {
                 Snippets.Add(w.CodeSnippet!);
@@ -372,7 +372,11 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             }
             CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
             AddEditSnippetWindow w = new(snip);
-            var result = w.ShowDialog();
+            var result = w.ShowEditDialog();
+            if (result == DialogResult.OK)
+            {
+                BindingSourceSnippetList.ResetBindings(false);
+            }
         }
     }
 }

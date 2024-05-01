@@ -40,25 +40,26 @@
             LabelUrls = new Label();
             ComboBoxType = new ComboBox();
             ComboBoxLanguage = new ComboBox();
-            comboBox3 = new ComboBox();
+            ComboBoxComplexity = new ComboBox();
             ButtonCalculateComplexity = new Button();
             MyToolTip = new ToolTip(components);
             TextBoxCode = new RichTextBox();
             CheckBoxExtendedDescription = new CheckBox();
-            richTextBox1 = new RichTextBox();
-            dataGridView1 = new DataGridView();
+            TextBoxDescription = new RichTextBox();
+            GridViewUrls = new DataGridView();
             ColumnValue = new DataGridViewTextBoxColumn();
             ButtonOk = new Button();
             ButtonCancel = new Button();
+            CheckBoxIsRunnable = new CheckBox();
             tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)GridViewUrls).BeginInit();
             SuspendLayout();
             // 
             // LabelName
             // 
             LabelName.Anchor = AnchorStyles.Left;
             LabelName.AutoSize = true;
-            LabelName.Location = new Point(12, 27);
+            LabelName.Location = new Point(12, 38);
             LabelName.Name = "LabelName";
             LabelName.Size = new Size(39, 15);
             LabelName.TabIndex = 0;
@@ -67,7 +68,7 @@
             // TextBoxName
             // 
             TextBoxName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            TextBoxName.Location = new Point(121, 24);
+            TextBoxName.Location = new Point(121, 35);
             TextBoxName.Name = "TextBoxName";
             TextBoxName.Size = new Size(358, 23);
             TextBoxName.TabIndex = 1;
@@ -142,7 +143,7 @@
             // LabelUrls
             // 
             LabelUrls.AutoSize = true;
-            LabelUrls.Location = new Point(577, 646);
+            LabelUrls.Location = new Point(577, 674);
             LabelUrls.Name = "LabelUrls";
             LabelUrls.Size = new Size(27, 15);
             LabelUrls.TabIndex = 7;
@@ -150,6 +151,7 @@
             // 
             // ComboBoxType
             // 
+            ComboBoxType.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxType.FormattingEnabled = true;
             ComboBoxType.Location = new Point(121, 58);
             ComboBoxType.Name = "ComboBoxType";
@@ -158,19 +160,21 @@
             // 
             // ComboBoxLanguage
             // 
+            ComboBoxLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxLanguage.FormattingEnabled = true;
             ComboBoxLanguage.Location = new Point(121, 98);
             ComboBoxLanguage.Name = "ComboBoxLanguage";
             ComboBoxLanguage.Size = new Size(121, 23);
             ComboBoxLanguage.TabIndex = 10;
             // 
-            // comboBox3
+            // ComboBoxComplexity
             // 
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(121, 138);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(121, 23);
-            comboBox3.TabIndex = 11;
+            ComboBoxComplexity.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxComplexity.FormattingEnabled = true;
+            ComboBoxComplexity.Location = new Point(121, 138);
+            ComboBoxComplexity.Name = "ComboBoxComplexity";
+            ComboBoxComplexity.Size = new Size(121, 23);
+            ComboBoxComplexity.TabIndex = 11;
             // 
             // ButtonCalculateComplexity
             // 
@@ -193,31 +197,31 @@
             // CheckBoxExtendedDescription
             // 
             CheckBoxExtendedDescription.AutoSize = true;
-            CheckBoxExtendedDescription.Location = new Point(12, 642);
+            CheckBoxExtendedDescription.Location = new Point(12, 670);
             CheckBoxExtendedDescription.Name = "CheckBoxExtendedDescription";
             CheckBoxExtendedDescription.Size = new Size(137, 19);
             CheckBoxExtendedDescription.TabIndex = 14;
             CheckBoxExtendedDescription.Text = "Extended description";
             CheckBoxExtendedDescription.UseVisualStyleBackColor = true;
             // 
-            // richTextBox1
+            // TextBoxDescription
             // 
-            richTextBox1.Location = new Point(155, 590);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(373, 130);
-            richTextBox1.TabIndex = 15;
-            richTextBox1.Text = "";
+            TextBoxDescription.Location = new Point(155, 618);
+            TextBoxDescription.Name = "TextBoxDescription";
+            TextBoxDescription.Size = new Size(373, 130);
+            TextBoxDescription.TabIndex = 15;
+            TextBoxDescription.Text = "";
             // 
-            // dataGridView1
+            // GridViewUrls
             // 
-            dataGridView1.AllowUserToOrderColumns = true;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ColumnValue });
-            dataGridView1.Location = new Point(623, 590);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(240, 150);
-            dataGridView1.TabIndex = 17;
+            GridViewUrls.AllowUserToOrderColumns = true;
+            GridViewUrls.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            GridViewUrls.Columns.AddRange(new DataGridViewColumn[] { ColumnValue });
+            GridViewUrls.Location = new Point(623, 618);
+            GridViewUrls.Name = "GridViewUrls";
+            GridViewUrls.RowTemplate.Height = 25;
+            GridViewUrls.Size = new Size(240, 150);
+            GridViewUrls.TabIndex = 17;
             // 
             // ColumnValue
             // 
@@ -226,7 +230,7 @@
             // 
             // ButtonOk
             // 
-            ButtonOk.Location = new Point(453, 782);
+            ButtonOk.Location = new Point(453, 810);
             ButtonOk.Name = "ButtonOk";
             ButtonOk.Size = new Size(75, 23);
             ButtonOk.TabIndex = 18;
@@ -235,26 +239,38 @@
             // 
             // ButtonCancel
             // 
-            ButtonCancel.Location = new Point(577, 782);
+            ButtonCancel.Location = new Point(577, 810);
             ButtonCancel.Name = "ButtonCancel";
             ButtonCancel.Size = new Size(75, 23);
             ButtonCancel.TabIndex = 19;
             ButtonCancel.Text = "Cancel";
             ButtonCancel.UseVisualStyleBackColor = true;
             // 
+            // CheckBoxIsRunnable
+            // 
+            CheckBoxIsRunnable.AutoSize = true;
+            CheckBoxIsRunnable.Location = new Point(13, 581);
+            CheckBoxIsRunnable.Name = "CheckBoxIsRunnable";
+            CheckBoxIsRunnable.Size = new Size(84, 19);
+            CheckBoxIsRunnable.TabIndex = 20;
+            CheckBoxIsRunnable.Text = "Is runnable";
+            MyToolTip.SetToolTip(CheckBoxIsRunnable, "Can be run immediately in this application to view results");
+            CheckBoxIsRunnable.UseVisualStyleBackColor = true;
+            // 
             // AddEditSnippetWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1087, 819);
+            ClientSize = new Size(1087, 841);
+            Controls.Add(CheckBoxIsRunnable);
             Controls.Add(ButtonCancel);
             Controls.Add(ButtonOk);
-            Controls.Add(dataGridView1);
-            Controls.Add(richTextBox1);
+            Controls.Add(GridViewUrls);
+            Controls.Add(TextBoxDescription);
             Controls.Add(CheckBoxExtendedDescription);
             Controls.Add(TextBoxCode);
             Controls.Add(ButtonCalculateComplexity);
-            Controls.Add(comboBox3);
+            Controls.Add(ComboBoxComplexity);
             Controls.Add(ComboBoxLanguage);
             Controls.Add(ComboBoxType);
             Controls.Add(LabelUrls);
@@ -269,7 +285,7 @@
             Text = "AddEditSnippetWindow";
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)GridViewUrls).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -286,15 +302,16 @@
         private Label LabelUrls;
         private ComboBox ComboBoxType;
         private ComboBox ComboBoxLanguage;
-        private ComboBox comboBox3;
+        private ComboBox ComboBoxComplexity;
         private Button ButtonCalculateComplexity;
         private ToolTip MyToolTip;
         private RichTextBox TextBoxCode;
         private CheckBox CheckBoxExtendedDescription;
-        private RichTextBox richTextBox1;
-        private DataGridView dataGridView1;
+        private RichTextBox TextBoxDescription;
+        private DataGridView GridViewUrls;
         private DataGridViewTextBoxColumn ColumnValue;
         private Button ButtonOk;
         private Button ButtonCancel;
+        private CheckBox CheckBoxIsRunnable;
     }
 }

@@ -209,9 +209,13 @@ namespace SnippetManagerCore
                 List<string> strings = new();
                 foreach (object o in (IEnumerable)val)
                 {
-                    strings.Add(o.ToString());
+                    strings.Add(StringizeSingleParameter(o));
                 }
                 return strings.Count > 0 ? $"[{string.Join(", ", strings)}]" : "[]";
+            }
+            else if (val is Enum e)
+            {
+                return EnumHelpers.GetValueName(e);
             }
             else
             {

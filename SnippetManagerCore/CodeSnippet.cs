@@ -52,6 +52,17 @@ namespace SnippetManagerCore
     {
         public string Description { get; set; }
         public List<string> Urls { get; set; }
+
+        public static bool operator==(SnippetExtendedDescription a, SnippetExtendedDescription b)
+        {
+            return a.Description == b.Description
+                && a.Urls.SequenceEqual(b.Urls);
+        }
+
+        public static bool operator!=(SnippetExtendedDescription a, SnippetExtendedDescription b)
+        {
+            return !(a == b);
+        }
     }
     public class CodeSnippet
     {
@@ -88,6 +99,75 @@ namespace SnippetManagerCore
                 ExtendedDesc = ExtendedDesc,
                 IsRunnable = IsRunnable
             };
+        }
+
+        public static bool operator ==(CodeSnippet a, CodeSnippet b)
+        {
+            return a.Lang == b.Lang
+                && a.Complexity == b.Complexity
+                && a.Types.SequenceEqual(b.Types)
+                && a.Name == b.Name
+                && a.Content == b.Content
+                && a.ExtendedDesc == b.ExtendedDesc
+                && a.IsRunnable == b.IsRunnable;
+        }
+
+        public static bool operator !=(CodeSnippet a, CodeSnippet b)
+        {
+            return !(a == b);
+        }
+
+        public void AssignPropertiesOf(CodeSnippet other)
+        {
+            Lang = other.Lang;
+            Complexity = other.Complexity;
+            Types = new List<SnippetType>(other.Types);
+            Name = other.Name;
+            Content = other.Content;
+            ExtendedDesc = other.ExtendedDesc;
+            IsRunnable = other.IsRunnable;
+        }
+
+        // this is probably a horrible "algorithm", but I did it just so there is an option of proper expansion in the future
+        public SnippetComplexity NaiveCalculateComplexity()
+        {
+            string[] code = Content.Split('\n');
+            int result = code.Length * 30 + Content.Length;
+            if (result < 100)
+            {
+                return SnippetComplexity.Low;
+            }
+            else if (result < 200)
+            {
+                return SnippetComplexity.MediumLow;
+            }
+            else if (result < 300)
+            {
+                return SnippetComplexity.Medium;
+            }
+            else if (result < 400)
+            {
+                return SnippetComplexity.MediumHigh;
+            }
+            else
+            {
+                return SnippetComplexity.High;
+            }
+        }
+
+        private static SnippetLanguage[] NonRunnableLangs = new[] { SnippetLanguage.Cpp, SnippetLanguage.Java };
+        // validates whether IsRunnable property is valid only by language (some languages are never runnable)
+        public bool ValidateIsRunnableByLanguage()
+        {
+            return IsLanguageRunnable(Lang);
+        }
+        public static bool IsLanguageRunnable(SnippetLanguage Lang)
+        {
+            if (NonRunnableLangs.Contains(Lang))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

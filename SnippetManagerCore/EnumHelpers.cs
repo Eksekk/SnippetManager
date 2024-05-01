@@ -15,8 +15,7 @@ namespace SnippetManagerCore
             foreach (T value in Enum.GetValues(typeof(T)))
             {
                 var memberInfo = typeof(T).GetMember(value.ToString());
-                var attrs = memberInfo[0].GetCustomAttributes(typeof(EnumTextAttribute), false);
-                EnumTextAttribute? attr = attrs.Length > 0 ? (EnumTextAttribute)attrs[0] : null;
+                EnumTextAttribute? attr = memberInfo[0].GetCustomAttribute<EnumTextAttribute>();
                 if (attr is not null)
                 {
                     values.Add(value, attr.Text);
@@ -27,6 +26,17 @@ namespace SnippetManagerCore
                 }
             }
             return values;
+        }
+
+        public static string GetValueName<T>(T value) where T: Enum
+        {
+            var memberInfo = value.GetType().GetMember(value.ToString());
+            EnumTextAttribute? attr = memberInfo[0].GetCustomAttribute<EnumTextAttribute>();
+            if (attr is not null)
+            {
+                return attr.Text;
+            }
+            return value.ToString();
         }
     }
 }
