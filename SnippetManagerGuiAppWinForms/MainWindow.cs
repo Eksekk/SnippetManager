@@ -8,10 +8,6 @@ namespace SnippetManagerGuiAppWinForms
 {
     public partial class MainWindow : Form
     {
-        private Dictionary<int, SnippetLanguage> IndexToSnippetLanguageDict = new();
-        private Dictionary<int, SnippetType> IndexToSnippetTypeDict = new();
-        private Dictionary<int, SnippetComplexity> IndexToSnippetComplexityDict = new();
-        private Dictionary<int, CodeSnippet> IndexDataViewRowToSnippet = new();
         private SnippetList Snippets = new();
         readonly int COLUMN_INDEX_TYPES;
         readonly BindingSource BindingSourceSnippetList;
@@ -136,28 +132,46 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
 
         private void InitializeComboBoxes()
         {
-            IndexToSnippetLanguageDict.Add(ComboBoxFilterLanguage.Items.Add("All"), SnippetLanguage.All);
-            IndexToSnippetLanguageDict.Add(ComboBoxFilterLanguage.Items.Add("C#"), SnippetLanguage.Csharp);
-            IndexToSnippetLanguageDict.Add(ComboBoxFilterLanguage.Items.Add("C++"), SnippetLanguage.Cpp);
-            IndexToSnippetLanguageDict.Add(ComboBoxFilterLanguage.Items.Add("Lua"), SnippetLanguage.Lua);
-            IndexToSnippetLanguageDict.Add(ComboBoxFilterLanguage.Items.Add("Python"), SnippetLanguage.Python);
-            IndexToSnippetLanguageDict.Add(ComboBoxFilterLanguage.Items.Add("Java"), SnippetLanguage.Java);
+            Dictionary<SnippetLanguage, string> langValues = new()
+            {
+                { SnippetLanguage.All, "All" },
+                { SnippetLanguage.Csharp, "C#" },
+                { SnippetLanguage.Cpp, "C++" },
+                { SnippetLanguage.Lua, "Lua" },
+                { SnippetLanguage.Python, "Python" },
+                { SnippetLanguage.Java, "Java" },
+            };
+            ComboBoxFilterLanguage.DataSource = new BindingSource(langValues, null);
+            ComboBoxFilterLanguage.DisplayMember = "Value";
+            ComboBoxFilterLanguage.ValueMember = "Key";
             ComboBoxFilterLanguage.SelectedIndex = 0;
 
-            IndexToSnippetTypeDict.Add(ComboBoxFilterType.Items.Add("Any"), SnippetType.Any);
-            IndexToSnippetTypeDict.Add(ComboBoxFilterType.Items.Add("Syntax"), SnippetType.Syntax);
-            IndexToSnippetTypeDict.Add(ComboBoxFilterType.Items.Add("Standard Library"), SnippetType.StandardLibrary);
-            IndexToSnippetTypeDict.Add(ComboBoxFilterType.Items.Add("Language Feature"), SnippetType.LanguageFeature);
-            IndexToSnippetTypeDict.Add(ComboBoxFilterType.Items.Add("Algorithm"), SnippetType.Algorithm);
-            IndexToSnippetTypeDict.Add(ComboBoxFilterType.Items.Add("Data Structure"), SnippetType.DataStructure);
+            Dictionary<SnippetType, string> typeValues = new()
+            {
+                { SnippetType.Any, "Any" },
+                { SnippetType.Syntax, "Syntax" },
+                { SnippetType.StandardLibrary, "Standard Library" },
+                { SnippetType.LanguageFeature, "Language Feature" },
+                { SnippetType.Algorithm, "Algorithm" },
+                { SnippetType.DataStructure, "Data Structure" },
+            };
+            ComboBoxFilterType.DataSource = new BindingSource(typeValues, null);
+            ComboBoxFilterType.DisplayMember = "Value";
+            ComboBoxFilterType.ValueMember = "Key";
             ComboBoxFilterType.SelectedIndex = 0;
 
-            IndexToSnippetComplexityDict.Add(ComboBoxFilterComplexity.Items.Add("Any"), SnippetComplexity.Any);
-            IndexToSnippetComplexityDict.Add(ComboBoxFilterComplexity.Items.Add("Low"), SnippetComplexity.Low);
-            IndexToSnippetComplexityDict.Add(ComboBoxFilterComplexity.Items.Add("Medium Low"), SnippetComplexity.MediumLow);
-            IndexToSnippetComplexityDict.Add(ComboBoxFilterComplexity.Items.Add("Medium"), SnippetComplexity.Medium);
-            IndexToSnippetComplexityDict.Add(ComboBoxFilterComplexity.Items.Add("Medium High"), SnippetComplexity.MediumHigh);
-            IndexToSnippetComplexityDict.Add(ComboBoxFilterComplexity.Items.Add("High"), SnippetComplexity.High);
+            Dictionary<SnippetComplexity, string> complexityValues = new()
+            {
+                { SnippetComplexity.Any, "Any" },
+                { SnippetComplexity.Low, "Low" },
+                { SnippetComplexity.MediumLow, "Medium Low" },
+                { SnippetComplexity.Medium, "Medium" },
+                { SnippetComplexity.MediumHigh, "Medium High" },
+                { SnippetComplexity.High, "High" },
+            };
+            ComboBoxFilterComplexity.DataSource = new BindingSource(complexityValues, null);
+            ComboBoxFilterComplexity.DisplayMember = "Value";
+            ComboBoxFilterComplexity.ValueMember = "Key";
             ComboBoxFilterComplexity.SelectedIndex = 0;
 
             ComboBoxFilterLanguage.SelectedIndexChanged += (sender, e) => ApplyFilters();
@@ -183,9 +197,9 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             var showSnippets = Snippets.FindSnippetsBy(new()
             {
                 Name = TextboxFilterName.Text,
-                Type = IndexToSnippetTypeDict[ComboBoxFilterType.SelectedIndex],
-                Lang = IndexToSnippetLanguageDict[ComboBoxFilterLanguage.SelectedIndex],
-                Complexity = IndexToSnippetComplexityDict[ComboBoxFilterComplexity.SelectedIndex],
+                Type = ((KeyValuePair<SnippetType, string>)ComboBoxFilterType.SelectedItem).Key,
+                Lang = ((KeyValuePair<SnippetLanguage, string>)ComboBoxFilterLanguage.SelectedItem).Key,
+                Complexity = ((KeyValuePair<SnippetComplexity, string>)ComboBoxFilterComplexity.SelectedItem).Key,
                 IsRunnable = ThreeRadioGroupToEnum(RadioButtonFilterIsRunnableYes, RadioButtonFilterIsRunnableNo),
                 HasExtendedDescription = ThreeRadioGroupToEnum(RadioButtonFilterHasExtendedDescriptionYes, RadioButtonFilterHasExtendedDescriptionNo)
             });
