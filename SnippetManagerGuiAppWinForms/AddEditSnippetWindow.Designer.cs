@@ -43,6 +43,7 @@
             ComboBoxComplexity = new ComboBox();
             ButtonCalculateComplexity = new Button();
             MyToolTip = new ToolTip(components);
+            CheckBoxIsRunnable = new CheckBox();
             TextBoxCode = new RichTextBox();
             CheckBoxExtendedDescription = new CheckBox();
             TextBoxDescription = new RichTextBox();
@@ -50,7 +51,6 @@
             ColumnValue = new DataGridViewTextBoxColumn();
             ButtonOk = new Button();
             ButtonCancel = new Button();
-            CheckBoxIsRunnable = new CheckBox();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GridViewUrls).BeginInit();
             SuspendLayout();
@@ -59,7 +59,7 @@
             // 
             LabelName.Anchor = AnchorStyles.Left;
             LabelName.AutoSize = true;
-            LabelName.Location = new Point(12, 38);
+            LabelName.Location = new Point(12, 15);
             LabelName.Name = "LabelName";
             LabelName.Size = new Size(39, 15);
             LabelName.TabIndex = 0;
@@ -68,7 +68,7 @@
             // TextBoxName
             // 
             TextBoxName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            TextBoxName.Location = new Point(121, 35);
+            TextBoxName.Location = new Point(121, 15);
             TextBoxName.Name = "TextBoxName";
             TextBoxName.Size = new Size(358, 23);
             TextBoxName.TabIndex = 1;
@@ -186,6 +186,17 @@
             MyToolTip.SetToolTip(ButtonCalculateComplexity, "Calculates complexity automatically based on amount of lines of code. Not the most reliable indicator.");
             ButtonCalculateComplexity.UseVisualStyleBackColor = true;
             // 
+            // CheckBoxIsRunnable
+            // 
+            CheckBoxIsRunnable.AutoSize = true;
+            CheckBoxIsRunnable.Location = new Point(13, 581);
+            CheckBoxIsRunnable.Name = "CheckBoxIsRunnable";
+            CheckBoxIsRunnable.Size = new Size(84, 19);
+            CheckBoxIsRunnable.TabIndex = 20;
+            CheckBoxIsRunnable.Text = "Is runnable";
+            MyToolTip.SetToolTip(CheckBoxIsRunnable, "Can be run immediately in this application to view results");
+            CheckBoxIsRunnable.UseVisualStyleBackColor = true;
+            // 
             // TextBoxCode
             // 
             TextBoxCode.Location = new Point(121, 179);
@@ -215,12 +226,13 @@
             // GridViewUrls
             // 
             GridViewUrls.AllowUserToOrderColumns = true;
+            GridViewUrls.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             GridViewUrls.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             GridViewUrls.Columns.AddRange(new DataGridViewColumn[] { ColumnValue });
-            GridViewUrls.Location = new Point(623, 618);
+            GridViewUrls.Location = new Point(620, 608);
             GridViewUrls.Name = "GridViewUrls";
             GridViewUrls.RowTemplate.Height = 25;
-            GridViewUrls.Size = new Size(240, 150);
+            GridViewUrls.Size = new Size(353, 154);
             GridViewUrls.TabIndex = 17;
             // 
             // ColumnValue
@@ -246,21 +258,11 @@
             ButtonCancel.Text = "Cancel";
             ButtonCancel.UseVisualStyleBackColor = true;
             // 
-            // CheckBoxIsRunnable
-            // 
-            CheckBoxIsRunnable.AutoSize = true;
-            CheckBoxIsRunnable.Location = new Point(13, 581);
-            CheckBoxIsRunnable.Name = "CheckBoxIsRunnable";
-            CheckBoxIsRunnable.Size = new Size(84, 19);
-            CheckBoxIsRunnable.TabIndex = 20;
-            CheckBoxIsRunnable.Text = "Is runnable";
-            MyToolTip.SetToolTip(CheckBoxIsRunnable, "Can be run immediately in this application to view results");
-            CheckBoxIsRunnable.UseVisualStyleBackColor = true;
-            // 
             // AddEditSnippetWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoScroll = true;
             ClientSize = new Size(1087, 841);
             Controls.Add(CheckBoxIsRunnable);
             Controls.Add(ButtonCancel);

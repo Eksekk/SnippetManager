@@ -216,6 +216,8 @@
             // CheckboxFilterShowMore
             // 
             CheckboxFilterShowMore.AutoSize = true;
+            CheckboxFilterShowMore.Checked = true;
+            CheckboxFilterShowMore.CheckState = CheckState.Checked;
             CheckboxFilterShowMore.Location = new Point(833, 28);
             CheckboxFilterShowMore.Name = "CheckboxFilterShowMore";
             CheckboxFilterShowMore.Size = new Size(118, 19);
@@ -496,6 +498,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoScroll = true;
             ClientSize = new Size(1215, 663);
             Controls.Add(ButtonEditSelectedSnippet);
             Controls.Add(ButtonAddSnippet);

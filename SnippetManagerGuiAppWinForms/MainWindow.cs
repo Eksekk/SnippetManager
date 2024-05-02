@@ -101,7 +101,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             DataViewSnippetList.CellFormatting += CellFormatting;
 
             // update snippet text before selecting another row in table
-            DataViewSnippetList.RowLeave += RowLeave;
+            DataViewSnippetList.RowLeave += (sender, e) => UpdateSnippetContentFromTextbox();
 
             // update code snippet in editor when new one is selected in table
             DataViewSnippetList.SelectionChanged += SelectionChanged;
@@ -180,10 +180,30 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                 HasExtendedDescription = ThreeRadioGroupToEnum(RadioButtonFilterHasExtendedDescriptionYes, RadioButtonFilterHasExtendedDescriptionNo)
             });
             HashSet<CodeSnippet> rowsToShow = new(showSnippets);
+
+            // since selection will be changed, update current snippet before selecting another programmatically
+            // (it doesn't send events?)
+            UpdateSnippetContentFromTextbox();
+            DataViewSnippetList.CurrentCell = null;
             foreach (DataGridViewRow row in DataViewSnippetList.Rows)
             {
                 // note: when trying to hide currently selected row you'll encounter some cryptic InvalidOperationException about "currency", because it's not allowed to hide selected row
-                row.Visible = row.Selected || rowsToShow.Contains(row.DataBoundItem);
+                if (row.Selected)
+                {
+                    row.Selected = false;
+                }
+                row.Visible = rowsToShow.Contains(row.DataBoundItem);
+            }
+
+            // select first visible row in control
+            foreach (DataGridViewRow row in DataViewSnippetList.Rows)
+            {
+                if (row.Visible)
+                {
+                    row.Selected = true;
+                    DataViewSnippetList.FirstDisplayedScrollingRowIndex = row.Index;
+                    return;
+                }
             }
         }
 
@@ -294,7 +314,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
                 var snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
                 if (snip.ExtendedDesc is not null)
                 {
-                    string desc = snip.ExtendedDesc.Value.Description + "\n\nInformation URLs:\n" + string.Join("\n", snip.ExtendedDesc.Value.Urls);
+                    string desc = snip.ExtendedDesc.Value.Description + (snip.ExtendedDesc.Value.Urls.Count > 0 ? "\n\nInformation URLs:\n" + string.Join("\n", snip.ExtendedDesc.Value.Urls) : "");
                     MessageBox.Show(desc, $"Extended Description of snippet '{snip.Name}'", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -309,7 +329,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             }
         }
 
-        private void RowLeave(object? sender, DataGridViewCellEventArgs e)
+        private void UpdateSnippetContentFromTextbox()
         {
             if (DataViewSnippetList.SelectedRows.Count == 0)
             {

@@ -16,7 +16,7 @@ namespace SnippetManagerGuiAppWinForms
     {
         private BindingSource BindingSourceSnippetComplexity;
         // setups combo box which displays enum values and names, so that it shows correct options
-        private void InitComboBoxData<T>(ComboBox box) where T: Enum
+        private void InitComboBoxData<T>(ComboBox box) where T : Enum
         {
             box.DataSource = new BindingSource(EnumHelpers.GetValuesWithNames<T>(), null);
             box.DisplayMember = "Value";
@@ -50,16 +50,18 @@ namespace SnippetManagerGuiAppWinForms
             // dynamically enable/disable "is runnable" checkbox depending on the language chosen
             ComboBoxLanguage.SelectedIndexChanged += (sender, e) =>
             {
-                CheckBoxIsRunnable.Enabled = CodeSnippet.IsLanguageRunnable((ComboBoxLanguage.SelectedItem as KeyValuePair<SnippetLanguage, string>?)!.Value.Key);
+                CheckBoxIsRunnable.Enabled = CodeSnippet.IsLanguageRunnable(ComboBoxSelectedItem<SnippetLanguage>(ComboBoxLanguage));
             };
             ButtonOk.Click += (sender, e) => this.DialogResult = DialogResult.OK;
 
             ButtonCancel.Click += (sender, e) => this.DialogResult = DialogResult.Cancel;
             ButtonCalculateComplexity.Click += (sender, e) => CalculateAndAssignComplexity();
+            // commented out, because "X" already gives "cancelled" result, while closing via ok button still triggers that event and overwrites value of "ok"
+            //this.FormClosed += (sender, e) => this.DialogResult = DialogResult.Cancel;
 
             CheckBoxIsRunnable.CheckedChanged += (sender, e) =>
             {
-                var lang = ((KeyValuePair<SnippetLanguage, string>)ComboBoxLanguage.SelectedItem).Key;
+                var lang = ComboBoxSelectedItem<SnippetLanguage>(ComboBoxLanguage);
                 if (CheckBoxIsRunnable.Checked && !CodeSnippet.IsLanguageRunnable(lang))
                 {
                     MessageBox.Show($"The language {EnumHelpers.GetValueName(lang)} is never runnable, so you can't set this snippet as runnable", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -78,7 +80,7 @@ namespace SnippetManagerGuiAppWinForms
             CodeSnippet = s;
         }
 
-        public static void SelectComboBoxOption<T>(ComboBox box, T option) where T: Enum
+        public static void SelectComboBoxOption<T>(ComboBox box, T option) where T : Enum
         {
             box.SelectedItem = FindEnumValuePairInComboBoxDictionary(box, option);
         }
@@ -110,6 +112,11 @@ namespace SnippetManagerGuiAppWinForms
             CheckBoxIsRunnable.Checked = s.IsRunnable;
         }
 
+        private static T ComboBoxSelectedItem<T>(ComboBox box)
+        {
+            return ((KeyValuePair<T, string>)box.SelectedItem).Key;
+        }
+
         private void UpdateSnippetFromControls()
         {
             // first validate is runnable checkbox, to prevent user from setting it to true for languages that are never runnable
@@ -120,16 +127,34 @@ namespace SnippetManagerGuiAppWinForms
                 CheckBoxIsRunnable.Checked = false;
                 return;
             }
-            CodeSnippet.Lang = (ComboBoxLanguage.SelectedItem as KeyValuePair<SnippetLanguage, string>?)!.Value.Key;
-            CodeSnippet.Complexity = (ComboBoxComplexity.SelectedItem as KeyValuePair<SnippetComplexity, string>?)!.Value.Key;
-            CodeSnippet.Types = new() { (ComboBoxType.SelectedItem as KeyValuePair<SnippetType, string>?)!.Value.Key };
+
+            // check for three enum values having value of "any" or "all", which is obviously invalid in most cases
+            // TODO: just remove them from combo box somehow?
+            if (ComboBoxSelectedItem<SnippetComplexity>(ComboBoxComplexity) == SnippetComplexity.Any)
+            {
+                MessageBox.Show("Snippet complexity of 'any' is invalid", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (ComboBoxSelectedItem<SnippetType>(ComboBoxType) == SnippetType.Any)
+            {
+                MessageBox.Show("Snippet type of 'any' is invalid", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (ComboBoxSelectedItem<SnippetLanguage>(ComboBoxLanguage) == SnippetLanguage.All)
+            {
+                MessageBox.Show("Snippet language of 'all' is invalid", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            CodeSnippet.Lang = ComboBoxSelectedItem<SnippetLanguage>(ComboBoxLanguage);
+            CodeSnippet.Complexity = ComboBoxSelectedItem<SnippetComplexity>(ComboBoxComplexity);
+            CodeSnippet.Types = new() { ComboBoxSelectedItem<SnippetType>(ComboBoxType) };
             CodeSnippet.Content = TextBoxCode.Text;
             if (CheckBoxExtendedDescription.Checked)
             {
                 CodeSnippet.ExtendedDesc = new()
                 {
                     Description = TextBoxDescription.Text,
-                    Urls = GridViewUrls.Rows.Cast<DataGridViewRow>().Select(r => r.Cells[0].Value.ToString()!).ToList().Where(s => !string.IsNullOrWhiteSpace(s)).ToList()
+                    Urls = GridViewUrls.Rows.Cast<DataGridViewRow>().Select(r => r.Cells[0].Value?.ToString()!).Where(s => !string.IsNullOrWhiteSpace(s)).ToList()
                 };
             }
             else

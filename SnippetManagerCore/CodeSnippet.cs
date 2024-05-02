@@ -85,6 +85,17 @@ namespace SnippetManagerCore
         // this only shows if snippet is suitable for and was intended to be instantly testable, language also affects this (C++ snippets won't be runnable for example, because I won't bundle and integrate C++ compiler)
         public bool IsRunnable { get; set; }
 
+        public CodeSnippet()
+        {
+            Name = "<unnamed>";
+            Content = "";
+            Lang = SnippetLanguage.Python;
+            Complexity = SnippetComplexity.Low;
+            Types = new[] { SnippetType.Syntax }.ToList();
+            ExtendedDesc = null;
+            IsRunnable = false;
+        }
+
         public override string ToString() => Tools.GenericClassObjectInfoToString(this, Color.Black);
 
         public CodeSnippet Clone()
@@ -155,7 +166,7 @@ namespace SnippetManagerCore
             }
         }
 
-        private static SnippetLanguage[] NonRunnableLangs = new[] { SnippetLanguage.Cpp, SnippetLanguage.Java };
+        private static readonly SnippetLanguage[] NonRunnableLangs = new[] { SnippetLanguage.Cpp, SnippetLanguage.Java };
         // validates whether IsRunnable property is valid only by language (some languages are never runnable)
         public bool ValidateIsRunnableByLanguage()
         {
