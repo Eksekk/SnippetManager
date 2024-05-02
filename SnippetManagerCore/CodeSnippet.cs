@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
+using System.Text.Json.Serialization;
 
 namespace SnippetManagerCore
 {
@@ -10,6 +11,7 @@ namespace SnippetManagerCore
         No
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SnippetLanguage
     {
         All,
@@ -21,6 +23,7 @@ namespace SnippetManagerCore
         Python,
         Java
     }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SnippetComplexity
     {
         Any,
@@ -33,6 +36,7 @@ namespace SnippetManagerCore
         High
     }
     [TypeConverter(typeof(CollectionToStringTypeConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SnippetType
     {
         Any,

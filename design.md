@@ -12,6 +12,7 @@ The program is designed to collect code snippets from various programming langua
 - Extended description for some snippets (along with links to websites where the topic is discussed), accessible by clicking a button
 - Cheat-sheets, i.e. condensed but long code with comments showing the syntax, built-in functions, etc. of a programming language
 - Graphical user interface
+- Sorting by clicking on column headers
 
 ## Various notes
 - Whole project will be split into core library implementing most of functionality, and GUI application using this library.

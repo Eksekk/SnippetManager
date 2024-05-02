@@ -106,6 +106,12 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             // update code snippet in editor when new one is selected in table
             DataViewSnippetList.SelectionChanged += SelectionChanged;
 
+            // allow user to sort by columns
+            foreach (DataGridViewColumn col in DataViewSnippetList.Columns)
+            {
+                col.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+
             loadToolStripMenuItem.Click += (sender, e) => LoadFromFile();
             saveToolStripMenuItem.Click += (sender, e) => SaveToFile();
             aboutToolStripMenuItem.Click += (sender, e) => About();

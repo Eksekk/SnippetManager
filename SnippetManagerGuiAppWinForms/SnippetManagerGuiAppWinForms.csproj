@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Scintilla5.NET" Version="5.3.3.18" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SnippetManagerCore\SnippetManagerCore.csproj" />
   </ItemGroup>
 
