@@ -168,7 +168,7 @@ namespace SnippetManagerGuiAppWinForms
             Debug.Assert(CodeSnippet is not null, "You need to provide snippet to edit when showing dialog in edit mode");
             // making a copy to restore later if user cancels the edit (need this, because I modify the passed snippet instantly when most controls' state is changed)
             // I believe this is called "memento pattern"
-            CodeSnippet copied = CodeSnippet.Clone();
+            CodeSnippet copied = CodeSnippet.Clone() as CodeSnippet;
             UpdateControlsFromSnippet(CodeSnippet);
             var r = base.ShowDialog();
             if (r == DialogResult.OK)

@@ -1,3 +1,4 @@
+using ScintillaNET;
 using SnippetManagerCore;
 using SnippetManagerCore.exceptions;
 using System.ComponentModel;
@@ -6,11 +7,43 @@ using System.Globalization;
 
 namespace SnippetManagerGuiAppWinForms
 {
+
     public partial class MainWindow : Form
     {
         private SnippetList Snippets = new();
         readonly int COLUMN_INDEX_TYPES;
         readonly BindingSource BindingSourceSnippetList;
+        private string LastSavedFilePath;
+
+        private void InitializeMenu()
+        {
+
+            newToolStripMenuItem.Click += (sender, e) => AddSnippet();
+            newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+            loadToolStripMenuItem.Click += (sender, e) => LoadFromFile();
+            loadToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+            saveToolStripMenuItem.Click += (sender, e) => SaveToFile(false);
+            saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            saveAsToolStripMenuItem.Click += (sender, e) => SaveToFile(true);
+            saveAsToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Shift | Keys.S;
+            aboutToolStripMenuItem.Click += (sender, e) => About();
+        }
+
+        private void InitializeFilters()
+        {
+            InitializeComboBoxes();
+            RadioButtonFilterHasExtendedDescriptionAny.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterHasExtendedDescriptionYes.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterHasExtendedDescriptionNo.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterIsRunnableAny.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterIsRunnableYes.CheckedChanged += (sender, e) => ApplyFilters();
+            RadioButtonFilterIsRunnableNo.CheckedChanged += (sender, e) => ApplyFilters();
+
+            TextboxFilterName.TextChanged += (sender, e) => ApplyFilters();
+
+            ShowMoreFiltersCheckStateChanged();
+            CheckboxFilterShowMore.CheckedChanged += (sender, e) => ShowMoreFiltersCheckStateChanged();
+        }
         public MainWindow()
         {
             Snippets.Add(new()
@@ -68,11 +101,15 @@ namespace SnippetManagerGuiAppWinForms
 local pi = math.pi
 local radius = 12
 local area = pi * radius * radius
-print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
+print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))
+local t = setmetatable({}, {
+    __index = function(tab)
+        print(""Indexing a table"")
+    end
+})"
             });
             InitializeComponent();
 
-            InitializeComboBoxes();
             BindingSourceSnippetList = new() { DataSource = Snippets };
             DataViewSnippetList.AutoGenerateColumns = false; // by default all object properties are shown, and I want only some, so have to add columns manually
             DataViewSnippetList.DataSource = BindingSourceSnippetList;
@@ -104,17 +141,15 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             DataViewSnippetList.RowLeave += (sender, e) => UpdateSnippetContentFromTextbox();
 
             // update code snippet in editor when new one is selected in table
-            DataViewSnippetList.SelectionChanged += SelectionChanged;
+            DataViewSnippetList.SelectionChanged += SnippetTableSelectionChanged;
 
             // allow user to sort by columns
             foreach (DataGridViewColumn col in DataViewSnippetList.Columns)
             {
                 col.SortMode = DataGridViewColumnSortMode.Automatic;
             }
+            InitializeMenu();
 
-            loadToolStripMenuItem.Click += (sender, e) => LoadFromFile();
-            saveToolStripMenuItem.Click += (sender, e) => SaveToFile();
-            aboutToolStripMenuItem.Click += (sender, e) => About();
 
             ButtonClone.Click += (sender, e) => CloneSelectedSnippet();
             ButtonDelete.Click += (sender, e) => DeleteSelectedSnippet();
@@ -123,17 +158,11 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             ButtonAddSnippet.Click += (sender, e) => AddSnippet();
             ButtonEditSelectedSnippet.Click += (sender, e) => EditSnippet();
 
-            RadioButtonFilterHasExtendedDescriptionAny.CheckedChanged += (sender, e) => ApplyFilters();
-            RadioButtonFilterHasExtendedDescriptionYes.CheckedChanged += (sender, e) => ApplyFilters();
-            RadioButtonFilterHasExtendedDescriptionNo.CheckedChanged += (sender, e) => ApplyFilters();
-            RadioButtonFilterIsRunnableAny.CheckedChanged += (sender, e) => ApplyFilters();
-            RadioButtonFilterIsRunnableYes.CheckedChanged += (sender, e) => ApplyFilters();
-            RadioButtonFilterIsRunnableNo.CheckedChanged += (sender, e) => ApplyFilters();
+            InitializeFilters();
 
-            TextboxFilterName.TextChanged += (sender, e) => ApplyFilters();
 
-            ShowMoreFiltersCheckStateChanged();
-            CheckboxFilterShowMore.CheckedChanged += (sender, e) => ShowMoreFiltersCheckStateChanged();
+            this.KeyPreview = true;
+            this.KeyDown += KeyPressed;
         }
 
         private void InitializeComboBoxes()
@@ -193,7 +222,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             DataViewSnippetList.CurrentCell = null;
             foreach (DataGridViewRow row in DataViewSnippetList.Rows)
             {
-                // note: when trying to hide currently selected row you'll encounter some cryptic InvalidOperationException about "currency", because it's not allowed to hide selected row
+                // note: when trying to hide currently selected row you'll encounter some cryptic InvalidOperationException about "currency manager", because it's not allowed to hide selected row
                 if (row.Selected)
                 {
                     row.Selected = false;
@@ -256,21 +285,36 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             MessageBox.Show("Snippet Manager\n\nA simple application to manage code snippets\n\nAuthor: Jan Solich", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void SaveToFile()
+        private void SaveToFile(bool saveAs)
         {
-            using SaveFileDialog sfd = new()
+            if (saveAs || LastSavedFilePath == null)
             {
-                Title = "Save snippets to file",
-                Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
-                CheckPathExists = true,
-                OverwritePrompt = true,
+                using SaveFileDialog sfd = new()
+                {
+                    Title = "Save snippets to file",
+                    Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                    CheckPathExists = true,
+                    OverwritePrompt = true,
 
-            };
-            if (sfd.ShowDialog() == DialogResult.OK)
+                };
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        Snippets.SaveToFile(sfd.FileName);
+                        LastSavedFilePath = sfd.FileName;
+                    }
+                    catch (SnippetSavingException e)
+                    {
+                        MessageBox.Show($"Error while saving snippets to file: {e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
             {
                 try
                 {
-                    Snippets.SaveToFile(sfd.FileName);
+                    Snippets.SaveToFile(LastSavedFilePath);
                 }
                 catch (SnippetSavingException e)
                 {
@@ -285,7 +329,7 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             {
                 var snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
                 DataViewSnippetList.SelectedRows[0].Selected = false;
-                var clonedSnip = snip.Clone();
+                var clonedSnip = snip.Clone() as CodeSnippet;
                 Snippets.Add(clonedSnip);
                 BindingSourceSnippetList.ResetBindings(false); // this will update the control (DataGridView) with new data (cloned snippet)
 
@@ -345,14 +389,18 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             snip.Content = TextBoxCodeViewerEditor.Text;
         }
 
-        private void SelectionChanged(object? sender, EventArgs e)
+        private void SnippetTableSelectionChanged(object? sender, EventArgs e)
         {
             if (DataViewSnippetList.SelectedRows.Count == 0)
             {
                 return;
             }
             CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+            TextBoxCodeViewerEditor.ChangeLanguage(snip.Lang);
             TextBoxCodeViewerEditor.Text = snip.Content;
+            //Clipboard.SetText(TextBoxCodeViewerEditor.DescribeKeywordSets());
+
+
             ButtonInfo.Enabled = snip.ExtendedDesc is not null;
         }
 
@@ -402,6 +450,33 @@ print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))"
             if (result == DialogResult.OK)
             {
                 BindingSourceSnippetList.ResetBindings(false);
+            }
+        }
+
+        private void KeyPressed(object? sender, KeyEventArgs e)
+        {
+            // we don't want to override default behavior of text box
+            if (TextBoxCodeViewerEditor.Focused)
+            {
+                return;
+            }
+
+            // note: menu item keystrokes are handled in constructor, here we add only the ones that are not in menu
+
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                AddSnippet();
+                e.SuppressKeyPress = true;
+            }
+            else if (e.Control && e.KeyCode == Keys.E)
+            {
+                EditSnippet();
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelectedSnippet();
+                e.SuppressKeyPress = true;
             }
         }
     }

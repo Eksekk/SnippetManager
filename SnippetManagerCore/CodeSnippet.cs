@@ -68,7 +68,7 @@ namespace SnippetManagerCore
             return !(a == b);
         }
     }
-    public class CodeSnippet
+    public class CodeSnippet : ICloneable, IEquatable<CodeSnippet>
     {
         // language the snippet is written in
         public SnippetLanguage Lang { get; set; }
@@ -102,7 +102,7 @@ namespace SnippetManagerCore
 
         public override string ToString() => Tools.GenericClassObjectInfoToString(this, Color.Black);
 
-        public CodeSnippet Clone()
+        public object Clone()
         {
             return new CodeSnippet
             {
@@ -116,15 +116,20 @@ namespace SnippetManagerCore
             };
         }
 
-        public static bool operator ==(CodeSnippet a, CodeSnippet b)
+        public static bool operator==(CodeSnippet a, CodeSnippet b)
         {
             return a.Lang == b.Lang
                 && a.Complexity == b.Complexity
-                && a.Types.SequenceEqual(b.Types)
+                && a.Types.OrderBy(t => t).SequenceEqual(b.Types.OrderBy(t => t))
                 && a.Name == b.Name
                 && a.Content == b.Content
                 && a.ExtendedDesc == b.ExtendedDesc
                 && a.IsRunnable == b.IsRunnable;
+        }
+
+        public bool Equals(CodeSnippet other)
+        {
+            return this == other;
         }
 
         public static bool operator !=(CodeSnippet a, CodeSnippet b)

@@ -29,10 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TextBoxCodeViewerEditor = new RichTextBox();
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
-            openToolStripMenuItem = new ToolStripMenuItem();
+            newToolStripMenuItem = new ToolStripMenuItem();
             loadToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             saveAsToolStripMenuItem = new ToolStripMenuItem();
@@ -75,21 +74,13 @@
             ButtonInfo = new Button();
             ButtonAddSnippet = new Button();
             ButtonEditSelectedSnippet = new Button();
+            TextBoxCodeViewerEditor = new MyScintillaControl();
             menuStrip1.SuspendLayout();
             GroupBoxFilters.SuspendLayout();
             GroupBoxFilterHasExtendedDescription.SuspendLayout();
             GroupBoxFilterIsRunnable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataViewSnippetList).BeginInit();
             SuspendLayout();
-            // 
-            // TextBoxCodeViewerEditor
-            // 
-            TextBoxCodeViewerEditor.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxCodeViewerEditor.Location = new Point(538, 233);
-            TextBoxCodeViewerEditor.Name = "TextBoxCodeViewerEditor";
-            TextBoxCodeViewerEditor.Size = new Size(638, 292);
-            TextBoxCodeViewerEditor.TabIndex = 0;
-            TextBoxCodeViewerEditor.Text = "";
             // 
             // menuStrip1
             // 
@@ -102,39 +93,39 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, loadToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, quitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, loadToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, quitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
             // 
-            // openToolStripMenuItem
+            // newToolStripMenuItem
             // 
-            openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(112, 22);
-            openToolStripMenuItem.Text = "Open";
+            newToolStripMenuItem.Name = "newToolStripMenuItem";
+            newToolStripMenuItem.Size = new Size(180, 22);
+            newToolStripMenuItem.Text = "New";
             // 
             // loadToolStripMenuItem
             // 
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            loadToolStripMenuItem.Size = new Size(112, 22);
+            loadToolStripMenuItem.Size = new Size(180, 22);
             loadToolStripMenuItem.Text = "Load";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(112, 22);
+            saveToolStripMenuItem.Size = new Size(180, 22);
             saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(112, 22);
+            saveAsToolStripMenuItem.Size = new Size(180, 22);
             saveAsToolStripMenuItem.Text = "Save as";
             // 
             // quitToolStripMenuItem
             // 
             quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            quitToolStripMenuItem.Size = new Size(112, 22);
+            quitToolStripMenuItem.Size = new Size(180, 22);
             quitToolStripMenuItem.Text = "Quit";
             // 
             // editToolStripMenuItem
@@ -494,12 +485,30 @@
             MyToolTip.SetToolTip(ButtonEditSelectedSnippet, "Opens a new window, where you can change properties like complexity");
             ButtonEditSelectedSnippet.UseVisualStyleBackColor = true;
             // 
+            // TextBoxCodeViewerEditor
+            // 
+            TextBoxCodeViewerEditor.AutoCMaxHeight = 9;
+            TextBoxCodeViewerEditor.BiDirectionality = ScintillaNET.BiDirectionalDisplayType.Disabled;
+            TextBoxCodeViewerEditor.CaretLineVisible = true;
+            TextBoxCodeViewerEditor.Font = new Font("Consolas", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            TextBoxCodeViewerEditor.LexerName = null;
+            TextBoxCodeViewerEditor.Location = new Point(538, 226);
+            TextBoxCodeViewerEditor.Name = "TextBoxCodeViewerEditor";
+            TextBoxCodeViewerEditor.ScrollWidth = 152;
+            TextBoxCodeViewerEditor.Size = new Size(641, 299);
+            TextBoxCodeViewerEditor.TabIndents = true;
+            TextBoxCodeViewerEditor.TabIndex = 9;
+            TextBoxCodeViewerEditor.Text = "myScintillaControl1";
+            TextBoxCodeViewerEditor.UseRightToLeftReadingLayout = false;
+            TextBoxCodeViewerEditor.WrapMode = ScintillaNET.WrapMode.None;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1215, 663);
+            Controls.Add(TextBoxCodeViewerEditor);
             Controls.Add(ButtonEditSelectedSnippet);
             Controls.Add(ButtonAddSnippet);
             Controls.Add(ButtonInfo);
@@ -507,7 +516,6 @@
             Controls.Add(ButtonClone);
             Controls.Add(DataViewSnippetList);
             Controls.Add(GroupBoxFilters);
-            Controls.Add(TextBoxCodeViewerEditor);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "MainWindow";
@@ -526,11 +534,9 @@
         }
 
         #endregion
-
-        private RichTextBox TextBoxCodeViewerEditor;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem newToolStripMenuItem;
         private ToolStripMenuItem loadToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem saveAsToolStripMenuItem;
@@ -573,5 +579,6 @@
         private GroupBox GroupBoxFilterHasExtendedDescription;
         private CheckBox CheckboxFilterShowMore;
         public GroupBox GroupBoxFilters;
+        private MyScintillaControl TextBoxCodeViewerEditor;
     }
 }
