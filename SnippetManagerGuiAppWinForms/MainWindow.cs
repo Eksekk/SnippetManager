@@ -190,6 +190,11 @@ local t = setmetatable({}, {
             ComboBoxFilterComplexity.SelectedIndexChanged += (sender, e) => ApplyFilters();
         }
 
+        private void AppendToBasicWindowText(string append)
+        {
+            this.Text = $"SnippetManager - {append}";
+        }
+
         private void ApplyFilters()
         {
             Func<RadioButton, RadioButton, ThreeValueEnum> ThreeRadioGroupToEnum = (yes, no) =>
@@ -267,6 +272,8 @@ local t = setmetatable({}, {
                         Snippets.LoadFromFile(ofd.FileName);
                         BindingSourceSnippetList.ResetBindings(false);
                         ApplyFilters();
+                        LastSavedFilePath = ofd.FileName;
+                        AppendToBasicWindowText(ofd.FileName);
                     }
                     catch (SnippetLoadingException e)
                     {
@@ -303,6 +310,7 @@ local t = setmetatable({}, {
                     {
                         Snippets.SaveToFile(sfd.FileName);
                         LastSavedFilePath = sfd.FileName;
+                        AppendToBasicWindowText(sfd.FileName);
                     }
                     catch (SnippetSavingException e)
                     {
