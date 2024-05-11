@@ -70,6 +70,11 @@ namespace SnippetManagerGuiAppWinForms
             };
 
             CheckBoxExtendedDescription.CheckedChanged += (sender, e) => OnExtendedDescriptionCheck();
+
+            ComboBoxLanguage.SelectedIndexChanged += (sender, e) =>
+            {
+                TextBoxCode.ChangeLanguage(ComboBoxSelectedItem<SnippetLanguage>(ComboBoxLanguage));
+            };
         }
 
         public CodeSnippet? CodeSnippet { get; set; }

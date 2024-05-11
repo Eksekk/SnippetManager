@@ -21,6 +21,8 @@ namespace SnippetManagerGuiAppWinForms
                     return "lua";
                 case SnippetLanguage.Python:
                     return "python";
+                case SnippetLanguage.All:
+                    return "null";
                 default:
                     throw new InvalidOperationException("Unknown language");
             }
@@ -56,7 +58,8 @@ namespace SnippetManagerGuiAppWinForms
                 @"abstract add alias as ascending async await base break case catch checked continue default delegate descending do dynamic else event explicit extern false finally fixed for foreach from get global goto group if implicit in interface internal into is join let lock nameof namespace new null object operator orderby out override params partial private protected public readonly ref remove return sealed select set sizeof stackalloc switch this throw true try typeof unchecked unsafe using value virtual when where while yield",
 
                 @"bool byte char class const decimal double enum float int long nint nuint sbyte short static string struct uint ulong ushort var void"
-            } }
+            } },
+            { SnippetLanguage.All, new string[] { } },
         };
 
         public static string? GetScintillaLexerKeywords(this SnippetLanguage lang, int keywordSet = 0)

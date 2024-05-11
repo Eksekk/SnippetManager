@@ -75,6 +75,8 @@
             ButtonAddSnippet = new Button();
             ButtonEditSelectedSnippet = new Button();
             TextBoxCodeViewerEditor = new MyScintillaControl();
+            ButtonRunCode = new Button();
+            TextBoxRunCodeOutput = new RichTextBox();
             menuStrip1.SuspendLayout();
             GroupBoxFilters.SuspendLayout();
             GroupBoxFilterHasExtendedDescription.SuspendLayout();
@@ -431,7 +433,7 @@
             DataViewSnippetList.Name = "DataViewSnippetList";
             DataViewSnippetList.RowTemplate.Height = 25;
             DataViewSnippetList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DataViewSnippetList.Size = new Size(520, 549);
+            DataViewSnippetList.Size = new Size(520, 702);
             DataViewSnippetList.TabIndex = 3;
             // 
             // ButtonClone
@@ -502,12 +504,31 @@
             TextBoxCodeViewerEditor.UseRightToLeftReadingLayout = false;
             TextBoxCodeViewerEditor.WrapMode = ScintillaNET.WrapMode.None;
             // 
+            // ButtonRunCode
+            // 
+            ButtonRunCode.Location = new Point(538, 570);
+            ButtonRunCode.Name = "ButtonRunCode";
+            ButtonRunCode.Size = new Size(219, 44);
+            ButtonRunCode.TabIndex = 10;
+            ButtonRunCode.Text = "Run this code";
+            ButtonRunCode.UseVisualStyleBackColor = true;
+            // 
+            // TextBoxRunCodeOutput
+            // 
+            TextBoxRunCodeOutput.Location = new Point(538, 620);
+            TextBoxRunCodeOutput.Name = "TextBoxRunCodeOutput";
+            TextBoxRunCodeOutput.Size = new Size(665, 184);
+            TextBoxRunCodeOutput.TabIndex = 11;
+            TextBoxRunCodeOutput.Text = "";
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(1215, 663);
+            ClientSize = new Size(1215, 816);
+            Controls.Add(TextBoxRunCodeOutput);
+            Controls.Add(ButtonRunCode);
             Controls.Add(TextBoxCodeViewerEditor);
             Controls.Add(ButtonEditSelectedSnippet);
             Controls.Add(ButtonAddSnippet);
@@ -580,5 +601,7 @@
         private CheckBox CheckboxFilterShowMore;
         public GroupBox GroupBoxFilters;
         private MyScintillaControl TextBoxCodeViewerEditor;
+        private Button ButtonRunCode;
+        private RichTextBox TextBoxRunCodeOutput;
     }
 }

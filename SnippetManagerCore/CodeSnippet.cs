@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Neo.IronLua;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text.Json.Serialization;
 
@@ -188,6 +189,59 @@ namespace SnippetManagerCore
                 return false;
             }
             return true;
+        }
+
+        public record RunCodeResult
+        {
+            public string Output { get; init; }
+            public bool Success { get; init; }
+            public bool Failure { get; init; }
+            public RunCodeResult(string output, bool success)
+            {
+                Output = output;
+                Success = success;
+                Failure = !success;
+            }
+        }
+
+        public RunCodeResult TryRunCode()
+        { 
+            switch(Lang)
+            {
+                case SnippetLanguage.Lua:
+                    {
+                        using Lua lua = new Lua();
+                        string output = "";
+                        var env = lua.CreateEnvironment();
+                        dynamic dynenv = env;
+                        dynenv.print = new Func<object[], LuaResult>(args =>
+                        {
+                            output += string.Join("\t", args) + "\n";
+                            return new LuaResult();
+                        });
+
+                        try
+                        {
+                            var res = env.DoChunk(Content, "snippet");
+                            if (res.Count > 0)
+                            {
+                                output += "\n\nScript Results: \n" + string.Join("\n", res.Values.Select(r => r.ToString()));
+                            }
+                            return new RunCodeResult(output, true);
+                        }
+                        catch (LuaException ex) when (ex is LuaRuntimeException || ex is LuaParseException)
+                        {
+                            output += "\n\nScript execution failed: " + ex.Message; // TODO: make it print nice stack trace with line numbers etc.
+                            return new RunCodeResult(output, false);
+                        }
+                    }
+                    break;
+                case SnippetLanguage.All:
+                    return new("Cannot run code without language specified", false);
+                default:
+                    throw new NotImplementedException("Not implemented yet");
+            }
+            
         }
     }
 }

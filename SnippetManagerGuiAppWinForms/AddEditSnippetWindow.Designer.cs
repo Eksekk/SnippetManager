@@ -44,13 +44,13 @@
             ButtonCalculateComplexity = new Button();
             MyToolTip = new ToolTip(components);
             CheckBoxIsRunnable = new CheckBox();
-            TextBoxCode = new RichTextBox();
             CheckBoxExtendedDescription = new CheckBox();
             TextBoxDescription = new RichTextBox();
             GridViewUrls = new DataGridView();
             ColumnValue = new DataGridViewTextBoxColumn();
             ButtonOk = new Button();
             ButtonCancel = new Button();
+            TextBoxCode = new MyScintillaControl();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GridViewUrls).BeginInit();
             SuspendLayout();
@@ -197,14 +197,6 @@
             MyToolTip.SetToolTip(CheckBoxIsRunnable, "Can be run immediately in this application to view results");
             CheckBoxIsRunnable.UseVisualStyleBackColor = true;
             // 
-            // TextBoxCode
-            // 
-            TextBoxCode.Location = new Point(121, 179);
-            TextBoxCode.Name = "TextBoxCode";
-            TextBoxCode.Size = new Size(581, 383);
-            TextBoxCode.TabIndex = 13;
-            TextBoxCode.Text = "";
-            // 
             // CheckBoxExtendedDescription
             // 
             CheckBoxExtendedDescription.AutoSize = true;
@@ -258,19 +250,35 @@
             ButtonCancel.Text = "Cancel";
             ButtonCancel.UseVisualStyleBackColor = true;
             // 
+            // TextBoxCode
+            // 
+            TextBoxCode.AutoCMaxHeight = 9;
+            TextBoxCode.BiDirectionality = ScintillaNET.BiDirectionalDisplayType.Disabled;
+            TextBoxCode.CaretLineVisible = true;
+            TextBoxCode.LexerName = null;
+            TextBoxCode.Location = new Point(121, 186);
+            TextBoxCode.Name = "TextBoxCode";
+            TextBoxCode.ScrollWidth = 111;
+            TextBoxCode.Size = new Size(597, 387);
+            TextBoxCode.TabIndents = true;
+            TextBoxCode.TabIndex = 21;
+            TextBoxCode.Text = "myScintillaControl1";
+            TextBoxCode.UseRightToLeftReadingLayout = false;
+            TextBoxCode.WrapMode = ScintillaNET.WrapMode.None;
+            // 
             // AddEditSnippetWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1087, 841);
+            Controls.Add(TextBoxCode);
             Controls.Add(CheckBoxIsRunnable);
             Controls.Add(ButtonCancel);
             Controls.Add(ButtonOk);
             Controls.Add(GridViewUrls);
             Controls.Add(TextBoxDescription);
             Controls.Add(CheckBoxExtendedDescription);
-            Controls.Add(TextBoxCode);
             Controls.Add(ButtonCalculateComplexity);
             Controls.Add(ComboBoxComplexity);
             Controls.Add(ComboBoxLanguage);
@@ -307,7 +315,6 @@
         private ComboBox ComboBoxComplexity;
         private Button ButtonCalculateComplexity;
         private ToolTip MyToolTip;
-        private RichTextBox TextBoxCode;
         private CheckBox CheckBoxExtendedDescription;
         private RichTextBox TextBoxDescription;
         private DataGridView GridViewUrls;
@@ -315,5 +322,6 @@
         private Button ButtonOk;
         private Button ButtonCancel;
         private CheckBox CheckBoxIsRunnable;
+        private MyScintillaControl TextBoxCode;
     }
 }

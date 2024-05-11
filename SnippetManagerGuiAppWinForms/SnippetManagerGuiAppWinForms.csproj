@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NeoLua" Version="1.3.14" />
     <PackageReference Include="Scintilla5.NET" Version="5.3.3.18" />
   </ItemGroup>
 

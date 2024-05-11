@@ -89,7 +89,8 @@ namespace SnippetManagerGuiAppWinForms
                 Lang = SnippetLanguage.Lua,
                 Complexity = SnippetComplexity.Low,
                 Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "print(\"Hello, World!\")"
+                Content = "print(\"Hello, World!\")",
+                IsRunnable = true
             });
             Snippets.Add(new()
             {
@@ -106,7 +107,8 @@ local t = setmetatable({}, {
     __index = function(tab)
         print(""Indexing a table"")
     end
-})"
+})",
+                IsRunnable = true
             });
             InitializeComponent();
 
@@ -139,6 +141,8 @@ local t = setmetatable({}, {
 
             // update snippet text before selecting another row in table
             DataViewSnippetList.RowLeave += (sender, e) => UpdateSnippetContentFromTextbox();
+            // and also when user modifies code in textbox (to run correct script when text is changed without selecting another snippet)
+            TextBoxCodeViewerEditor.TextChanged += (sender, e) => UpdateSnippetContentFromTextbox();
 
             // update code snippet in editor when new one is selected in table
             DataViewSnippetList.SelectionChanged += SnippetTableSelectionChanged;
@@ -158,8 +162,9 @@ local t = setmetatable({}, {
             ButtonAddSnippet.Click += (sender, e) => AddSnippet();
             ButtonEditSelectedSnippet.Click += (sender, e) => EditSnippet();
 
-            InitializeFilters();
+            ButtonRunCode.Click += (sender, e) => RunCode();
 
+            InitializeFilters();
 
             this.KeyPreview = true;
             this.KeyDown += KeyPressed;
@@ -410,6 +415,7 @@ local t = setmetatable({}, {
 
 
             ButtonInfo.Enabled = snip.ExtendedDesc is not null;
+            ButtonRunCode.Enabled = snip.ValidateIsRunnableByLanguage() && snip.IsRunnable;
         }
 
         private void ShowMoreFiltersCheckStateChanged()
@@ -486,6 +492,17 @@ local t = setmetatable({}, {
                 DeleteSelectedSnippet();
                 e.SuppressKeyPress = true;
             }
+        }
+
+        private void RunCode()
+        {
+            if (DataViewSnippetList.SelectedRows.Count == 0)
+            {
+                return;
+            }
+            CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
+            CodeSnippet.RunCodeResult result = snip.TryRunCode();
+            TextBoxRunCodeOutput.Text = result.Output;
         }
     }
 }
