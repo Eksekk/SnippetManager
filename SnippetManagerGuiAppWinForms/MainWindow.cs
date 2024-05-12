@@ -43,6 +43,8 @@ namespace SnippetManagerGuiAppWinForms
 
             ShowMoreFiltersCheckStateChanged();
             CheckboxFilterShowMore.CheckedChanged += (sender, e) => ShowMoreFiltersCheckStateChanged();
+
+            ButtonClearFilters.Click += (sender, e) => ClearFilters();
         }
         public MainWindow()
         {
@@ -68,7 +70,8 @@ namespace SnippetManagerGuiAppWinForms
                 Lang = SnippetLanguage.Python,
                 Complexity = SnippetComplexity.Low,
                 Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "print(\"Hello, World!\")"
+                Content = "print(\"Hello, World!\")",
+                IsRunnable = true
             });
             Snippets.Add(new()
             {
@@ -172,23 +175,11 @@ local t = setmetatable({}, {
 
         private void InitializeComboBoxes()
         {
-            Dictionary<SnippetLanguage, string> langValues = EnumHelpers.GetValuesWithNames<SnippetLanguage>();
-            ComboBoxFilterLanguage.DataSource = new BindingSource(langValues, null);
-            ComboBoxFilterLanguage.DisplayMember = "Value";
-            ComboBoxFilterLanguage.ValueMember = "Key";
-            ComboBoxFilterLanguage.SelectedIndex = 0;
+            GuiHelpers.InitComboBoxData<SnippetLanguage>(ComboBoxFilterLanguage);
 
-            Dictionary<SnippetType, string> typeValues = EnumHelpers.GetValuesWithNames<SnippetType>();
-            ComboBoxFilterType.DataSource = new BindingSource(typeValues, null);
-            ComboBoxFilterType.DisplayMember = "Value";
-            ComboBoxFilterType.ValueMember = "Key";
-            ComboBoxFilterType.SelectedIndex = 0;
+            GuiHelpers.InitComboBoxData<SnippetType>(ComboBoxFilterType);
 
-            Dictionary<SnippetComplexity, string> complexityValues = EnumHelpers.GetValuesWithNames<SnippetComplexity>();
-            ComboBoxFilterComplexity.DataSource = new BindingSource(complexityValues, null);
-            ComboBoxFilterComplexity.DisplayMember = "Value";
-            ComboBoxFilterComplexity.ValueMember = "Key";
-            ComboBoxFilterComplexity.SelectedIndex = 0;
+            GuiHelpers.InitComboBoxData<SnippetComplexity>(ComboBoxFilterComplexity);
 
             ComboBoxFilterLanguage.SelectedIndexChanged += (sender, e) => ApplyFilters();
             ComboBoxFilterType.SelectedIndexChanged += (sender, e) => ApplyFilters();
@@ -501,8 +492,28 @@ local t = setmetatable({}, {
                 return;
             }
             CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
-            CodeSnippet.RunCodeResult result = snip.TryRunCode();
+            bool persist = false;
+            if (snip.Lang == SnippetLanguage.Lua)
+            {
+                persist = CheckBoxPersistEnvironmentLua.Checked;
+            }
+            else if (snip.Lang == SnippetLanguage.Python)
+            {
+                persist = CheckBoxPersistEnvironmentPython.Checked;
+            }
+            CodeSnippet.RunCodeResult result = snip.TryRunCode(persist);
             TextBoxRunCodeOutput.Text = result.Output;
+        }
+
+        private void ClearFilters()
+        {
+            GuiHelpers.SelectComboBoxOption(ComboBoxFilterLanguage, SnippetLanguage.All);
+            GuiHelpers.SelectComboBoxOption(ComboBoxFilterType, SnippetType.Any);
+            GuiHelpers.SelectComboBoxOption(ComboBoxFilterComplexity, SnippetComplexity.Any);
+            RadioButtonFilterIsRunnableAny.Checked = true;
+            RadioButtonFilterHasExtendedDescriptionAny.Checked = true;
+            TextboxFilterName.Text = "";
+            // no table values refresh here, because I believe events sent by changing options above will automatically do it
         }
     }
 }

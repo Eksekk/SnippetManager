@@ -123,4 +123,10 @@
   <metadata name="MyToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
+  <data name="GroupBoxPersistEnvironment.ToolTip" xml:space="preserve">
+    <value>For supported languages, their execution environment can be persisted, which means
+that globals defined in one snippet execution will be available during execution of other snippets
+in this language. Otherwise, each execution starts fresh without any changes from previous code.
+Unchecking a language instantly clears its environment.</value>
+  </data>
 </root>

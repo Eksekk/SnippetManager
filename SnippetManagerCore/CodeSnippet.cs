@@ -1,4 +1,6 @@
-﻿using Neo.IronLua;
+﻿using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
+using Neo.IronLua;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text.Json.Serialization;
@@ -204,42 +206,92 @@ namespace SnippetManagerCore
             }
         }
 
-        public RunCodeResult TryRunCode()
+        Lua lua = new Lua();// TODO: cleanup on exit
+        LuaGlobal? luaEnvironment;
+        private RunCodeResult TryRunLua(bool persistEnvironment)
+        {
+            if (Lang != SnippetLanguage.Lua)
+            {
+                throw new InvalidOperationException("Cannot run Lua code when snippet is not written in Lua language");
+            }
+            string output = "";
+            if (luaEnvironment is null || !persistEnvironment)
+            {
+                luaEnvironment = lua.CreateEnvironment();
+            }
+            dynamic dynenv = luaEnvironment;
+            // replace built-in print function to capture its output
+            dynenv.print = new Func<object[], LuaResult>(args =>
+            {
+                output += string.Join("\t", args) + "\n";
+                return new LuaResult();
+            });
+
+            try
+            {
+                var res = luaEnvironment.DoChunk(Content, "snippet");
+                if (res.Count > 0)
+                {
+                    output += "----------------------------------\nScript Results: \n" + string.Join("\n", res.Values.Select(r => r.ToString()));
+                }
+                return new RunCodeResult(output, true);
+            }
+            catch (LuaException ex) when (ex is LuaRuntimeException || ex is LuaParseException)
+            {
+                output += "----------------------------------\nScript execution failed: " + ex.Message; // TODO: make it print nice stack trace with line numbers etc.
+                return new RunCodeResult(output, false);
+            }
+        }
+
+        private static ScriptEngine pythonEngine = Python.CreateEngine();
+        private static ScriptScope pythonScope;
+        delegate void MyPythonPrint(params object[] args);
+        public RunCodeResult TryRunPython(bool persistEnvironment)
+        {
+            if (Lang != SnippetLanguage.Python)
+            {
+                throw new InvalidOperationException("Cannot run Python code when snippet is not written in Python language");
+            }
+            if (pythonScope is null || !persistEnvironment)
+            {
+                pythonScope = pythonEngine.CreateScope();
+            }
+            dynamic pythonGlobals = pythonScope;
+            string output = "";
+            pythonGlobals.print = new MyPythonPrint((args =>
+            {
+                output += string.Join("\t", args) + "\n";
+            }));
+            try
+            {
+                ScriptSource source = pythonEngine.CreateScriptSourceFromString(Content);
+                dynamic res = source.Execute(pythonScope);
+                output += "----------------------------------\nScript Results: \n" + res;
+                return new RunCodeResult(output, true);
+            }
+            catch (Exception ex)
+            {
+                output += "----------------------------------\nScript execution failed: " + ex.Message; // TODO: make it print nice stack trace with line numbers etc.
+                return new RunCodeResult(output, false);
+            }
+        }
+
+        public RunCodeResult TryRunCode(bool persistEnvironment)
         { 
             switch(Lang)
             {
                 case SnippetLanguage.Lua:
                     {
-                        using Lua lua = new Lua();
-                        string output = "";
-                        var env = lua.CreateEnvironment();
-                        dynamic dynenv = env;
-                        dynenv.print = new Func<object[], LuaResult>(args =>
-                        {
-                            output += string.Join("\t", args) + "\n";
-                            return new LuaResult();
-                        });
-
-                        try
-                        {
-                            var res = env.DoChunk(Content, "snippet");
-                            if (res.Count > 0)
-                            {
-                                output += "\n\nScript Results: \n" + string.Join("\n", res.Values.Select(r => r.ToString()));
-                            }
-                            return new RunCodeResult(output, true);
-                        }
-                        catch (LuaException ex) when (ex is LuaRuntimeException || ex is LuaParseException)
-                        {
-                            output += "\n\nScript execution failed: " + ex.Message; // TODO: make it print nice stack trace with line numbers etc.
-                            return new RunCodeResult(output, false);
-                        }
+                        return TryRunLua(persistEnvironment);
                     }
-                    break;
+                case SnippetLanguage.Python:
+                    {
+                        return TryRunPython(persistEnvironment);
+                    }
                 case SnippetLanguage.All:
                     return new("Cannot run code without language specified", false);
                 default:
-                    throw new NotImplementedException("Not implemented yet");
+                    throw new NotImplementedException($"Running {EnumHelpers.GetValueName(Lang)} is not implemented yet");
             }
             
         }

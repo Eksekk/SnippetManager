@@ -15,36 +15,15 @@ namespace SnippetManagerGuiAppWinForms
     public partial class AddEditSnippetWindow : Form
     {
         private BindingSource BindingSourceSnippetComplexity;
-        // setups combo box which displays enum values and names, so that it shows correct options
-        private void InitComboBoxData<T>(ComboBox box) where T : Enum
-        {
-            box.DataSource = new BindingSource(EnumHelpers.GetValuesWithNames<T>(), null);
-            box.DisplayMember = "Value";
-            box.ValueMember = "Key";
-        }
-
-        // retrieves key-value pair from combo box's real data source (a dictionary), to make it possible to directly assign enum value to combo box
-        private static KeyValuePair<T, string> FindEnumValuePairInComboBoxDictionary<T>(ComboBox box, T value) where T : Enum
-        {
-            var bs = box.DataSource as BindingSource;
-            if (bs.DataSource is Dictionary<T, string> dict)
-            {
-                return dict.First(entry => Equals(entry.Key, value));
-            }
-            else
-            {
-                throw new InvalidOperationException("ComboBox data source is not a dictionary");
-            }
-        }
         public AddEditSnippetWindow()
         {
             InitializeComponent();
-            InitComboBoxData<SnippetComplexity>(ComboBoxComplexity);
+            GuiHelpers.InitComboBoxData<SnippetComplexity>(ComboBoxComplexity);
             ComboBoxComplexity.SelectedItem = SnippetLanguage.All;
             BindingSourceSnippetComplexity = ComboBoxComplexity.DataSource as BindingSource;
-            InitComboBoxData<SnippetLanguage>(ComboBoxLanguage);
+            GuiHelpers.InitComboBoxData<SnippetLanguage>(ComboBoxLanguage);
             ComboBoxLanguage.SelectedItem = SnippetType.Any;
-            InitComboBoxData<SnippetType>(ComboBoxType);
+            GuiHelpers.InitComboBoxData<SnippetType>(ComboBoxType);
             ComboBoxType.SelectedItem = SnippetComplexity.Any;
 
             // dynamically enable/disable "is runnable" checkbox depending on the language chosen
@@ -85,17 +64,12 @@ namespace SnippetManagerGuiAppWinForms
             CodeSnippet = s;
         }
 
-        public static void SelectComboBoxOption<T>(ComboBox box, T option) where T : Enum
-        {
-            box.SelectedItem = FindEnumValuePairInComboBoxDictionary(box, option);
-        }
-
         private void UpdateControlsFromSnippet(CodeSnippet s)
         {
             // fill the form with the snippet data
-            SelectComboBoxOption(ComboBoxLanguage, s.Lang);
-            SelectComboBoxOption(ComboBoxComplexity, s.Complexity);
-            SelectComboBoxOption(ComboBoxType, s.Types[0]);
+            GuiHelpers.SelectComboBoxOption(ComboBoxLanguage, s.Lang);
+            GuiHelpers.SelectComboBoxOption(ComboBoxComplexity, s.Complexity);
+            GuiHelpers.SelectComboBoxOption(ComboBoxType, s.Types[0]);
             TextBoxCode.Text = s.Content;
             if (s.ExtendedDesc is not null)
             {
@@ -204,7 +178,7 @@ namespace SnippetManagerGuiAppWinForms
         {
             CodeSnippet.Content = TextBoxCode.Text; // update this here, so that below method call uses the latest code
             CodeSnippet.Complexity = CodeSnippet.NaiveCalculateComplexity();
-            SelectComboBoxOption(ComboBoxComplexity, CodeSnippet.Complexity);
+            GuiHelpers.SelectComboBoxOption(ComboBoxComplexity, CodeSnippet.Complexity);
         }
 
         public void OnExtendedDescriptionCheck()

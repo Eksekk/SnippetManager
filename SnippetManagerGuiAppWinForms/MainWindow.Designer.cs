@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
@@ -77,11 +78,16 @@
             TextBoxCodeViewerEditor = new MyScintillaControl();
             ButtonRunCode = new Button();
             TextBoxRunCodeOutput = new RichTextBox();
+            GroupBoxPersistEnvironment = new GroupBox();
+            CheckBoxPersistEnvironmentLua = new CheckBox();
+            CheckBoxPersistEnvironmentPython = new CheckBox();
+            ButtonClearFilters = new Button();
             menuStrip1.SuspendLayout();
             GroupBoxFilters.SuspendLayout();
             GroupBoxFilterHasExtendedDescription.SuspendLayout();
             GroupBoxFilterIsRunnable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataViewSnippetList).BeginInit();
+            GroupBoxPersistEnvironment.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -103,31 +109,31 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(180, 22);
+            newToolStripMenuItem.Size = new Size(112, 22);
             newToolStripMenuItem.Text = "New";
             // 
             // loadToolStripMenuItem
             // 
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            loadToolStripMenuItem.Size = new Size(180, 22);
+            loadToolStripMenuItem.Size = new Size(112, 22);
             loadToolStripMenuItem.Text = "Load";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(112, 22);
             saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(180, 22);
+            saveAsToolStripMenuItem.Size = new Size(112, 22);
             saveAsToolStripMenuItem.Text = "Save as";
             // 
             // quitToolStripMenuItem
             // 
             quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            quitToolStripMenuItem.Size = new Size(180, 22);
+            quitToolStripMenuItem.Size = new Size(112, 22);
             quitToolStripMenuItem.Text = "Quit";
             // 
             // editToolStripMenuItem
@@ -183,6 +189,7 @@
             // GroupBoxFilters
             // 
             GroupBoxFilters.AutoSize = true;
+            GroupBoxFilters.Controls.Add(ButtonClearFilters);
             GroupBoxFilters.Controls.Add(CheckboxFilterShowMore);
             GroupBoxFilters.Controls.Add(GroupBoxFilterHasExtendedDescription);
             GroupBoxFilters.Controls.Add(GroupBoxFilterIsRunnable);
@@ -449,7 +456,7 @@
             // ButtonDelete
             // 
             ButtonDelete.ForeColor = Color.Red;
-            ButtonDelete.Location = new Point(802, 197);
+            ButtonDelete.Location = new Point(1078, 197);
             ButtonDelete.Name = "ButtonDelete";
             ButtonDelete.Size = new Size(126, 23);
             ButtonDelete.TabIndex = 5;
@@ -469,7 +476,7 @@
             // 
             // ButtonAddSnippet
             // 
-            ButtonAddSnippet.Location = new Point(538, 531);
+            ButtonAddSnippet.Location = new Point(802, 197);
             ButtonAddSnippet.Name = "ButtonAddSnippet";
             ButtonAddSnippet.Size = new Size(113, 23);
             ButtonAddSnippet.TabIndex = 7;
@@ -479,7 +486,7 @@
             // 
             // ButtonEditSelectedSnippet
             // 
-            ButtonEditSelectedSnippet.Location = new Point(667, 531);
+            ButtonEditSelectedSnippet.Location = new Point(921, 197);
             ButtonEditSelectedSnippet.Name = "ButtonEditSelectedSnippet";
             ButtonEditSelectedSnippet.Size = new Size(151, 23);
             ButtonEditSelectedSnippet.TabIndex = 8;
@@ -506,7 +513,7 @@
             // 
             // ButtonRunCode
             // 
-            ButtonRunCode.Location = new Point(538, 570);
+            ButtonRunCode.Location = new Point(538, 531);
             ButtonRunCode.Name = "ButtonRunCode";
             ButtonRunCode.Size = new Size(219, 44);
             ButtonRunCode.TabIndex = 10;
@@ -517,9 +524,51 @@
             // 
             TextBoxRunCodeOutput.Location = new Point(538, 620);
             TextBoxRunCodeOutput.Name = "TextBoxRunCodeOutput";
+            TextBoxRunCodeOutput.ReadOnly = true;
             TextBoxRunCodeOutput.Size = new Size(665, 184);
             TextBoxRunCodeOutput.TabIndex = 11;
             TextBoxRunCodeOutput.Text = "";
+            // 
+            // GroupBoxPersistEnvironment
+            // 
+            GroupBoxPersistEnvironment.Controls.Add(CheckBoxPersistEnvironmentPython);
+            GroupBoxPersistEnvironment.Controls.Add(CheckBoxPersistEnvironmentLua);
+            GroupBoxPersistEnvironment.Location = new Point(802, 531);
+            GroupBoxPersistEnvironment.Name = "GroupBoxPersistEnvironment";
+            GroupBoxPersistEnvironment.Size = new Size(377, 44);
+            GroupBoxPersistEnvironment.TabIndex = 12;
+            GroupBoxPersistEnvironment.TabStop = false;
+            GroupBoxPersistEnvironment.Text = "Persist environment?";
+            MyToolTip.SetToolTip(GroupBoxPersistEnvironment, resources.GetString("GroupBoxPersistEnvironment.ToolTip"));
+            // 
+            // CheckBoxPersistEnvironmentLua
+            // 
+            CheckBoxPersistEnvironmentLua.AutoSize = true;
+            CheckBoxPersistEnvironmentLua.Location = new Point(6, 19);
+            CheckBoxPersistEnvironmentLua.Name = "CheckBoxPersistEnvironmentLua";
+            CheckBoxPersistEnvironmentLua.Size = new Size(45, 19);
+            CheckBoxPersistEnvironmentLua.TabIndex = 0;
+            CheckBoxPersistEnvironmentLua.Text = "Lua";
+            CheckBoxPersistEnvironmentLua.UseVisualStyleBackColor = true;
+            // 
+            // CheckBoxPersistEnvironmentPython
+            // 
+            CheckBoxPersistEnvironmentPython.AutoSize = true;
+            CheckBoxPersistEnvironmentPython.Location = new Point(76, 19);
+            CheckBoxPersistEnvironmentPython.Name = "CheckBoxPersistEnvironmentPython";
+            CheckBoxPersistEnvironmentPython.Size = new Size(64, 19);
+            CheckBoxPersistEnvironmentPython.TabIndex = 1;
+            CheckBoxPersistEnvironmentPython.Text = "Python";
+            CheckBoxPersistEnvironmentPython.UseVisualStyleBackColor = true;
+            // 
+            // ButtonClearFilters
+            // 
+            ButtonClearFilters.Location = new Point(957, 28);
+            ButtonClearFilters.Name = "ButtonClearFilters";
+            ButtonClearFilters.Size = new Size(92, 23);
+            ButtonClearFilters.TabIndex = 22;
+            ButtonClearFilters.Text = "Clear filters";
+            ButtonClearFilters.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
@@ -527,6 +576,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1215, 816);
+            Controls.Add(GroupBoxPersistEnvironment);
             Controls.Add(TextBoxRunCodeOutput);
             Controls.Add(ButtonRunCode);
             Controls.Add(TextBoxCodeViewerEditor);
@@ -550,6 +600,8 @@
             GroupBoxFilterIsRunnable.ResumeLayout(false);
             GroupBoxFilterIsRunnable.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DataViewSnippetList).EndInit();
+            GroupBoxPersistEnvironment.ResumeLayout(false);
+            GroupBoxPersistEnvironment.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -603,5 +655,9 @@
         private MyScintillaControl TextBoxCodeViewerEditor;
         private Button ButtonRunCode;
         private RichTextBox TextBoxRunCodeOutput;
+        private GroupBox GroupBoxPersistEnvironment;
+        private CheckBox CheckBoxPersistEnvironmentLua;
+        private CheckBox CheckBoxPersistEnvironmentPython;
+        private Button ButtonClearFilters;
     }
 }
