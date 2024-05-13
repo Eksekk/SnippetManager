@@ -46,6 +46,7 @@
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             GroupBoxFilters = new GroupBox();
+            ButtonClearFilters = new Button();
             CheckboxFilterShowMore = new CheckBox();
             GroupBoxFilterHasExtendedDescription = new GroupBox();
             RadioButtonFilterHasExtendedDescriptionAny = new RadioButton();
@@ -75,13 +76,14 @@
             ButtonInfo = new Button();
             ButtonAddSnippet = new Button();
             ButtonEditSelectedSnippet = new Button();
+            GroupBoxPersistEnvironment = new GroupBox();
+            CheckBoxPersistEnvironmentPython = new CheckBox();
+            CheckBoxPersistEnvironmentLua = new CheckBox();
             TextBoxCodeViewerEditor = new MyScintillaControl();
             ButtonRunCode = new Button();
             TextBoxRunCodeOutput = new RichTextBox();
-            GroupBoxPersistEnvironment = new GroupBox();
-            CheckBoxPersistEnvironmentLua = new CheckBox();
-            CheckBoxPersistEnvironmentPython = new CheckBox();
-            ButtonClearFilters = new Button();
+            label1 = new Label();
+            label2 = new Label();
             menuStrip1.SuspendLayout();
             GroupBoxFilters.SuspendLayout();
             GroupBoxFilterHasExtendedDescription.SuspendLayout();
@@ -213,6 +215,15 @@
             GroupBoxFilters.TabStop = false;
             GroupBoxFilters.Text = "Filters";
             // 
+            // ButtonClearFilters
+            // 
+            ButtonClearFilters.Location = new Point(957, 28);
+            ButtonClearFilters.Name = "ButtonClearFilters";
+            ButtonClearFilters.Size = new Size(92, 23);
+            ButtonClearFilters.TabIndex = 22;
+            ButtonClearFilters.Text = "Clear filters";
+            ButtonClearFilters.UseVisualStyleBackColor = true;
+            // 
             // CheckboxFilterShowMore
             // 
             CheckboxFilterShowMore.AutoSize = true;
@@ -240,6 +251,7 @@
             // RadioButtonFilterHasExtendedDescriptionAny
             // 
             RadioButtonFilterHasExtendedDescriptionAny.AutoSize = true;
+            RadioButtonFilterHasExtendedDescriptionAny.Checked = true;
             RadioButtonFilterHasExtendedDescriptionAny.Location = new Point(19, 22);
             RadioButtonFilterHasExtendedDescriptionAny.Name = "RadioButtonFilterHasExtendedDescriptionAny";
             RadioButtonFilterHasExtendedDescriptionAny.Size = new Size(46, 19);
@@ -255,7 +267,6 @@
             RadioButtonFilterHasExtendedDescriptionNo.Name = "RadioButtonFilterHasExtendedDescriptionNo";
             RadioButtonFilterHasExtendedDescriptionNo.Size = new Size(41, 19);
             RadioButtonFilterHasExtendedDescriptionNo.TabIndex = 15;
-            RadioButtonFilterHasExtendedDescriptionNo.TabStop = true;
             RadioButtonFilterHasExtendedDescriptionNo.Text = "No";
             RadioButtonFilterHasExtendedDescriptionNo.UseVisualStyleBackColor = true;
             // 
@@ -266,7 +277,6 @@
             RadioButtonFilterHasExtendedDescriptionYes.Name = "RadioButtonFilterHasExtendedDescriptionYes";
             RadioButtonFilterHasExtendedDescriptionYes.Size = new Size(42, 19);
             RadioButtonFilterHasExtendedDescriptionYes.TabIndex = 14;
-            RadioButtonFilterHasExtendedDescriptionYes.TabStop = true;
             RadioButtonFilterHasExtendedDescriptionYes.Text = "Yes";
             RadioButtonFilterHasExtendedDescriptionYes.UseVisualStyleBackColor = true;
             // 
@@ -289,7 +299,6 @@
             RadioButtonFilterIsRunnableNo.Name = "RadioButtonFilterIsRunnableNo";
             RadioButtonFilterIsRunnableNo.Size = new Size(41, 19);
             RadioButtonFilterIsRunnableNo.TabIndex = 15;
-            RadioButtonFilterIsRunnableNo.TabStop = true;
             RadioButtonFilterIsRunnableNo.Text = "No";
             RadioButtonFilterIsRunnableNo.UseVisualStyleBackColor = true;
             // 
@@ -300,13 +309,13 @@
             RadioButtonFilterIsRunnableYes.Name = "RadioButtonFilterIsRunnableYes";
             RadioButtonFilterIsRunnableYes.Size = new Size(42, 19);
             RadioButtonFilterIsRunnableYes.TabIndex = 14;
-            RadioButtonFilterIsRunnableYes.TabStop = true;
             RadioButtonFilterIsRunnableYes.Text = "Yes";
             RadioButtonFilterIsRunnableYes.UseVisualStyleBackColor = true;
             // 
             // RadioButtonFilterIsRunnableAny
             // 
             RadioButtonFilterIsRunnableAny.AutoSize = true;
+            RadioButtonFilterIsRunnableAny.Checked = true;
             RadioButtonFilterIsRunnableAny.Location = new Point(22, 22);
             RadioButtonFilterIsRunnableAny.Name = "RadioButtonFilterIsRunnableAny";
             RadioButtonFilterIsRunnableAny.Size = new Size(46, 19);
@@ -432,7 +441,6 @@
             DataViewSnippetList.AllowUserToAddRows = false;
             DataViewSnippetList.AllowUserToDeleteRows = false;
             DataViewSnippetList.AllowUserToResizeRows = false;
-            DataViewSnippetList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DataViewSnippetList.BackgroundColor = SystemColors.Window;
             DataViewSnippetList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DataViewSnippetList.Location = new Point(12, 197);
@@ -440,7 +448,7 @@
             DataViewSnippetList.Name = "DataViewSnippetList";
             DataViewSnippetList.RowTemplate.Height = 25;
             DataViewSnippetList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DataViewSnippetList.Size = new Size(520, 702);
+            DataViewSnippetList.Size = new Size(520, 619);
             DataViewSnippetList.TabIndex = 3;
             // 
             // ButtonClone
@@ -494,6 +502,38 @@
             MyToolTip.SetToolTip(ButtonEditSelectedSnippet, "Opens a new window, where you can change properties like complexity");
             ButtonEditSelectedSnippet.UseVisualStyleBackColor = true;
             // 
+            // GroupBoxPersistEnvironment
+            // 
+            GroupBoxPersistEnvironment.Controls.Add(CheckBoxPersistEnvironmentPython);
+            GroupBoxPersistEnvironment.Controls.Add(CheckBoxPersistEnvironmentLua);
+            GroupBoxPersistEnvironment.Location = new Point(802, 531);
+            GroupBoxPersistEnvironment.Name = "GroupBoxPersistEnvironment";
+            GroupBoxPersistEnvironment.Size = new Size(401, 44);
+            GroupBoxPersistEnvironment.TabIndex = 12;
+            GroupBoxPersistEnvironment.TabStop = false;
+            GroupBoxPersistEnvironment.Text = "Persist environment?";
+            MyToolTip.SetToolTip(GroupBoxPersistEnvironment, resources.GetString("GroupBoxPersistEnvironment.ToolTip"));
+            // 
+            // CheckBoxPersistEnvironmentPython
+            // 
+            CheckBoxPersistEnvironmentPython.AutoSize = true;
+            CheckBoxPersistEnvironmentPython.Location = new Point(76, 19);
+            CheckBoxPersistEnvironmentPython.Name = "CheckBoxPersistEnvironmentPython";
+            CheckBoxPersistEnvironmentPython.Size = new Size(64, 19);
+            CheckBoxPersistEnvironmentPython.TabIndex = 1;
+            CheckBoxPersistEnvironmentPython.Text = "Python";
+            CheckBoxPersistEnvironmentPython.UseVisualStyleBackColor = true;
+            // 
+            // CheckBoxPersistEnvironmentLua
+            // 
+            CheckBoxPersistEnvironmentLua.AutoSize = true;
+            CheckBoxPersistEnvironmentLua.Location = new Point(6, 19);
+            CheckBoxPersistEnvironmentLua.Name = "CheckBoxPersistEnvironmentLua";
+            CheckBoxPersistEnvironmentLua.Size = new Size(45, 19);
+            CheckBoxPersistEnvironmentLua.TabIndex = 0;
+            CheckBoxPersistEnvironmentLua.Text = "Lua";
+            CheckBoxPersistEnvironmentLua.UseVisualStyleBackColor = true;
+            // 
             // TextBoxCodeViewerEditor
             // 
             TextBoxCodeViewerEditor.AutoCMaxHeight = 9;
@@ -504,7 +544,7 @@
             TextBoxCodeViewerEditor.Location = new Point(538, 226);
             TextBoxCodeViewerEditor.Name = "TextBoxCodeViewerEditor";
             TextBoxCodeViewerEditor.ScrollWidth = 152;
-            TextBoxCodeViewerEditor.Size = new Size(641, 299);
+            TextBoxCodeViewerEditor.Size = new Size(665, 299);
             TextBoxCodeViewerEditor.TabIndents = true;
             TextBoxCodeViewerEditor.TabIndex = 9;
             TextBoxCodeViewerEditor.Text = "myScintillaControl1";
@@ -522,60 +562,39 @@
             // 
             // TextBoxRunCodeOutput
             // 
-            TextBoxRunCodeOutput.Location = new Point(538, 620);
+            TextBoxRunCodeOutput.Location = new Point(538, 632);
             TextBoxRunCodeOutput.Name = "TextBoxRunCodeOutput";
             TextBoxRunCodeOutput.ReadOnly = true;
             TextBoxRunCodeOutput.Size = new Size(665, 184);
             TextBoxRunCodeOutput.TabIndex = 11;
             TextBoxRunCodeOutput.Text = "";
             // 
-            // GroupBoxPersistEnvironment
+            // label1
             // 
-            GroupBoxPersistEnvironment.Controls.Add(CheckBoxPersistEnvironmentPython);
-            GroupBoxPersistEnvironment.Controls.Add(CheckBoxPersistEnvironmentLua);
-            GroupBoxPersistEnvironment.Location = new Point(802, 531);
-            GroupBoxPersistEnvironment.Name = "GroupBoxPersistEnvironment";
-            GroupBoxPersistEnvironment.Size = new Size(377, 44);
-            GroupBoxPersistEnvironment.TabIndex = 12;
-            GroupBoxPersistEnvironment.TabStop = false;
-            GroupBoxPersistEnvironment.Text = "Persist environment?";
-            MyToolTip.SetToolTip(GroupBoxPersistEnvironment, resources.GetString("GroupBoxPersistEnvironment.ToolTip"));
+            label1.AutoSize = true;
+            label1.Location = new Point(763, 604);
+            label1.Name = "label1";
+            label1.Size = new Size(200, 15);
+            label1.TabIndex = 0;
+            label1.Text = "Last run code results for this snippet:";
             // 
-            // CheckBoxPersistEnvironmentLua
+            // label2
             // 
-            CheckBoxPersistEnvironmentLua.AutoSize = true;
-            CheckBoxPersistEnvironmentLua.Location = new Point(6, 19);
-            CheckBoxPersistEnvironmentLua.Name = "CheckBoxPersistEnvironmentLua";
-            CheckBoxPersistEnvironmentLua.Size = new Size(45, 19);
-            CheckBoxPersistEnvironmentLua.TabIndex = 0;
-            CheckBoxPersistEnvironmentLua.Text = "Lua";
-            CheckBoxPersistEnvironmentLua.UseVisualStyleBackColor = true;
-            // 
-            // CheckBoxPersistEnvironmentPython
-            // 
-            CheckBoxPersistEnvironmentPython.AutoSize = true;
-            CheckBoxPersistEnvironmentPython.Location = new Point(76, 19);
-            CheckBoxPersistEnvironmentPython.Name = "CheckBoxPersistEnvironmentPython";
-            CheckBoxPersistEnvironmentPython.Size = new Size(64, 19);
-            CheckBoxPersistEnvironmentPython.TabIndex = 1;
-            CheckBoxPersistEnvironmentPython.Text = "Python";
-            CheckBoxPersistEnvironmentPython.UseVisualStyleBackColor = true;
-            // 
-            // ButtonClearFilters
-            // 
-            ButtonClearFilters.Location = new Point(957, 28);
-            ButtonClearFilters.Name = "ButtonClearFilters";
-            ButtonClearFilters.Size = new Size(92, 23);
-            ButtonClearFilters.TabIndex = 22;
-            ButtonClearFilters.Text = "Clear filters";
-            ButtonClearFilters.UseVisualStyleBackColor = true;
+            label2.BorderStyle = BorderStyle.Fixed3D;
+            label2.Enabled = false;
+            label2.Location = new Point(538, 592);
+            label2.Name = "label2";
+            label2.Size = new Size(665, 3);
+            label2.TabIndex = 14;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(1215, 816);
+            ClientSize = new Size(1215, 826);
+            Controls.Add(label2);
+            Controls.Add(label1);
             Controls.Add(GroupBoxPersistEnvironment);
             Controls.Add(TextBoxRunCodeOutput);
             Controls.Add(ButtonRunCode);
@@ -659,5 +678,7 @@
         private CheckBox CheckBoxPersistEnvironmentLua;
         private CheckBox CheckBoxPersistEnvironmentPython;
         private Button ButtonClearFilters;
+        private Label label1;
+        private Label label2;
     }
 }

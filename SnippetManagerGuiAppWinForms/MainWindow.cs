@@ -285,7 +285,13 @@ local t = setmetatable({}, {
 
         private void About()
         {
-            MessageBox.Show("Snippet Manager\n\nA simple application to manage code snippets\n\nAuthor: Jan Solich", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(@"Snippet Manager
+
+A simple application to manage code snippets.
+
+Note: lua and python packages used in this project are designed to integrate with C# and .NET environment, which causes the first one to be quite heavily, and second one a bit different from standard lua and python.
+
+Author: Jan Solich", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void SaveToFile(bool saveAs)
@@ -402,6 +408,14 @@ local t = setmetatable({}, {
             CodeSnippet snip = DataViewSnippetList.SelectedRows[0].DataBoundItem as CodeSnippet;
             TextBoxCodeViewerEditor.ChangeLanguage(snip.Lang);
             TextBoxCodeViewerEditor.Text = snip.Content;
+            if (snip.LastRunCodeResult is not null)
+            {
+                TextBoxRunCodeOutput.Text = snip.LastRunCodeResult.Output;
+            }
+            else
+            {
+                TextBoxRunCodeOutput.Text = "";
+            }
             //Clipboard.SetText(TextBoxCodeViewerEditor.DescribeKeywordSets());
 
 

@@ -92,6 +92,8 @@ namespace SnippetManagerCore
         // this only shows if snippet is suitable for and was intended to be instantly testable, language also affects this (C++ snippets won't be runnable for example, because I won't bundle and integrate C++ compiler)
         public bool IsRunnable { get; set; }
 
+        public RunCodeResult LastRunCodeResult { get; set; }
+
         public CodeSnippet()
         {
             Name = "<unnamed>";
@@ -277,18 +279,21 @@ namespace SnippetManagerCore
         }
 
         public RunCodeResult TryRunCode(bool persistEnvironment)
-        { 
+        {
             switch(Lang)
             {
                 case SnippetLanguage.Lua:
                     {
-                        return TryRunLua(persistEnvironment);
+                        LastRunCodeResult = TryRunLua(persistEnvironment);
+                        return LastRunCodeResult;
                     }
                 case SnippetLanguage.Python:
                     {
-                        return TryRunPython(persistEnvironment);
+                        LastRunCodeResult = TryRunPython(persistEnvironment);
+                        return LastRunCodeResult;
                     }
                 case SnippetLanguage.All:
+                    // FIXME: throw exception here
                     return new("Cannot run code without language specified", false);
                 default:
                     throw new NotImplementedException($"Running {EnumHelpers.GetValueName(Lang)} is not implemented yet");

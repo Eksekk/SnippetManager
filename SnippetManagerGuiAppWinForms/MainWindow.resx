@@ -127,6 +127,6 @@
     <value>For supported languages, their execution environment can be persisted, which means
 that globals defined in one snippet execution will be available during execution of other snippets
 in this language. Otherwise, each execution starts fresh without any changes from previous code.
-Unchecking a language instantly clears its environment.</value>
+Unchecking a language has no instant effects, but clears its environment just before next execution.</value>
   </data>
 </root>
