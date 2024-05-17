@@ -48,71 +48,7 @@ namespace SnippetManagerGuiAppWinForms
         }
         public MainWindow()
         {
-            Snippets.Add(new()
-            {
-                Name = "Hello World",
-                Lang = SnippetLanguage.Csharp,
-                Complexity = SnippetComplexity.Low,
-                Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "Console.WriteLine(\"Hello, World!\");"
-            });
-            Snippets.Add(new()
-            {
-                Name = "Hello World",
-                Lang = SnippetLanguage.Cpp,
-                Complexity = SnippetComplexity.Low,
-                Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "std::cout << \"Hello, World!\" << std::endl;"
-            });
-            Snippets.Add(new()
-            {
-                Name = "Hello World",
-                Lang = SnippetLanguage.Python,
-                Complexity = SnippetComplexity.Low,
-                Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "print(\"Hello, World!\")",
-                IsRunnable = true
-            });
-            Snippets.Add(new()
-            {
-                Name = "Hello World",
-                Lang = SnippetLanguage.Java,
-                Complexity = SnippetComplexity.Low,
-                Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "System.out.println(\"Hello, World!\");",
-                ExtendedDesc = new SnippetExtendedDescription()
-                {
-                    Description = "This is a simple snippet to print 'Hello, World!' to the console",
-                    Urls = new() { "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program" }
-                }
-            });
-            Snippets.Add(new()
-            {
-                Name = "Hello World",
-                Lang = SnippetLanguage.Lua,
-                Complexity = SnippetComplexity.Low,
-                Types = new[] { SnippetType.Syntax }.ToList(),
-                Content = "print(\"Hello, World!\")",
-                IsRunnable = true
-            });
-            Snippets.Add(new()
-            {
-                Name = "Calculations",
-                Lang = SnippetLanguage.Lua,
-                Complexity = SnippetComplexity.MediumLow,
-                Types = new[] { SnippetType.StandardLibrary }.ToList(),
-                Content = @"-- calculate the area of a circle
-local pi = math.pi
-local radius = 12
-local area = pi * radius * radius
-print(string.format(""Area of a circle with radius %d is %.2f"", radius, area))
-local t = setmetatable({}, {
-    __index = function(tab)
-        print(""Indexing a table"")
-    end
-})",
-                IsRunnable = true
-            });
+            Snippets.AddRange(ExampleSnippets.Get());
             InitializeComponent();
 
             BindingSourceSnippetList = new() { DataSource = Snippets };
@@ -150,11 +86,11 @@ local t = setmetatable({}, {
             // update code snippet in editor when new one is selected in table
             DataViewSnippetList.SelectionChanged += SnippetTableSelectionChanged;
 
-            // allow user to sort by columns
-            foreach (DataGridViewColumn col in DataViewSnippetList.Columns)
-            {
-                col.SortMode = DataGridViewColumnSortMode.Automatic;
-            }
+            // allow user to sort by columns (not working yet)
+//             foreach (DataGridViewColumn col in DataViewSnippetList.Columns)
+//             {
+//                 col.SortMode = DataGridViewColumnSortMode.Automatic;
+//             }
             InitializeMenu();
 
 
@@ -169,6 +105,7 @@ local t = setmetatable({}, {
 
             InitializeFilters();
 
+            // allow some keyboard shortcuts, for example "delete" key to delete selected snippet
             this.KeyPreview = true;
             this.KeyDown += KeyPressed;
         }

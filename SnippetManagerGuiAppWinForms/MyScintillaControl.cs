@@ -52,6 +52,7 @@ namespace SnippetManagerGuiAppWinForms
                     Styles[ScintillaNET.Style.Python.Word].ForeColor = Color.Chocolate;
                     Styles[ScintillaNET.Style.Python.DefName].ForeColor = Color.IndianRed;
                     Styles[ScintillaNET.Style.Python.Word2].ForeColor = Color.MediumSeaGreen;
+                    Styles[ScintillaNET.Style.Python.String].ForeColor = Color.Orange;
                     break;
                 case SnippetLanguage.Csharp:
                 case SnippetLanguage.Cpp:

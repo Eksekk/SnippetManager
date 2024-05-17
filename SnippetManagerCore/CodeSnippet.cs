@@ -1,9 +1,17 @@
-﻿using IronPython.Hosting;
+﻿using HarmonyLib;
+using IronPython.Hosting;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Scripting.Hosting;
 using Neo.IronLua;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using System.Text.Json.Serialization;
+using static IronPython.Modules.PythonWeakRef;
 
 namespace SnippetManagerCore
 {
@@ -238,9 +246,15 @@ namespace SnippetManagerCore
                 }
                 return new RunCodeResult(output, true);
             }
-            catch (LuaException ex) when (ex is LuaRuntimeException || ex is LuaParseException)
+            catch (LuaRuntimeException ex)
             {
                 output += "----------------------------------\nScript execution failed: " + ex.Message; // TODO: make it print nice stack trace with line numbers etc.
+                ex.StackTrace.Split('\n').ToList().ForEach(line => output += line + "\n");
+                return new RunCodeResult(output, false);
+            }
+            catch (LuaParseException ex)
+            {
+                output += $"Script parsing failed (line {ex.Line}): {ex.Message}";
                 return new RunCodeResult(output, false);
             }
         }
@@ -268,7 +282,6 @@ namespace SnippetManagerCore
             {
                 ScriptSource source = pythonEngine.CreateScriptSourceFromString(Content);
                 dynamic res = source.Execute(pythonScope);
-                output += "----------------------------------\nScript Results: \n" + res;
                 return new RunCodeResult(output, true);
             }
             catch (Exception ex)
@@ -276,6 +289,175 @@ namespace SnippetManagerCore
                 output += "----------------------------------\nScript execution failed: " + ex.Message; // TODO: make it print nice stack trace with line numbers etc.
                 return new RunCodeResult(output, false);
             }
+        }
+
+        public class Injection
+        {
+            public static void install(MethodInfo original, MethodInfo patch)
+            {
+                RuntimeHelpers.PrepareMethod(original.MethodHandle);
+                RuntimeHelpers.PrepareMethod(patch.MethodHandle);
+
+                unsafe
+                {
+                    if (IntPtr.Size == 4)
+                    {
+                        int* inj = (int*)patch.MethodHandle.Value.ToPointer() + 2;
+                        int* tar = (int*)original.MethodHandle.Value.ToPointer() + 2;
+#if DEBUG
+                        Console.WriteLine("\nVersion x86 Debug\n");
+
+                        byte* injInst = (byte*)*inj;
+                        byte* tarInst = (byte*)*tar;
+
+                        int* injSrc = (int*)(injInst + 1);
+                        int* tarSrc = (int*)(tarInst + 1);
+
+                        *tarSrc = (((int)injInst + 5) + *injSrc) - ((int)tarInst + 5);
+#else
+                    Console.WriteLine("\nVersion x86 Release\n");
+                    *tar = *inj;
+#endif
+                    }
+                    else
+                    {
+
+                        long* inj = (long*)patch.MethodHandle.Value.ToPointer() + 1;
+                        long* tar = (long*)original.MethodHandle.Value.ToPointer() + 1;
+#if DEBUG
+                        Console.WriteLine("\nVersion x64 Debug\n");
+                        byte* injInst = (byte*)*inj;
+                        byte* tarInst = (byte*)*tar;
+
+
+                        int* injSrc = (int*)(injInst + 1);
+                        int* tarSrc = (int*)(tarInst + 1);
+
+                        *tarSrc = (((int)injInst + 5) + *injSrc) - ((int)tarInst + 5);
+#else
+                    Console.WriteLine("\nVersion x64 Release\n");
+                    *tar = *inj;
+#endif
+                    }
+                }
+            }
+        }
+
+        static Assembly mainAssembly = Assembly.GetExecutingAssembly();
+        public static List<string> outputListForPatching;
+        [HarmonyPatch(typeof(System.Console), nameof(System.Console.WriteLine))]
+        public static void PrefixHandler(string value)
+        {
+            // this if statement will hopefully disable patch when I myself call Console.WriteLine()
+            if (Assembly.GetCallingAssembly() != mainAssembly)
+            {
+                outputListForPatching.Add(value + "\n");
+            }
+        }
+
+        static AssemblyLoadContext LastAssemblyLoadContext = new AssemblyLoadContext(null, true);
+        public RunCodeResult TryRunCsharp()
+        {
+            var provider = new Microsoft.CSharp.CSharpCodeProvider();
+
+            //var parms = new CompilerParameters();
+            //parms.ReferencedAssemblies.Add("System.dll");
+            //parms.ReferencedAssemblies.Add("System.Core.dll");
+            //parms.GenerateInMemory = true;
+            //parms.IncludeDebugInformation = true;
+            //// enable top-level code
+            //parms.CompilerOptions = "/t:library /unsafe /langversion:9 /top-level-statements+";
+
+            //CompilerResults result = provider.
+            //    CompileAssemblyFromSource(parms, this.Content);
+            List<string> outputList = new();
+
+            var refs = new HashSet<Assembly>()
+            {
+                typeof(object).Assembly,
+                typeof(Console).Assembly,
+            };
+            foreach (var t in new Type[]{ typeof(string) })
+            {
+                refs.Add(t.Assembly);
+
+            }
+
+            foreach (var a in AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => !a.IsDynamic
+                    && a.ExportedTypes.Count() == 0
+                    && (a.FullName.Contains("netstandard") || a.FullName.Contains("System.Runtime,"))))
+                refs.Add(a);
+
+            var options = CSharpParseOptions.Default
+                .WithLanguageVersion(LanguageVersion.Latest);
+
+            var compileOptions = new CSharpCompilationOptions(OutputKind.WindowsRuntimeApplication)
+                .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
+
+            var compilation = CSharpCompilation.Create("Dynamic",
+                new[] { SyntaxFactory.ParseSyntaxTree(this.Content, options) },
+                refs.Select(a => MetadataReference.CreateFromFile(a.Location)),
+                compileOptions
+            );
+
+            if (LastAssemblyLoadContext is not null)
+            {
+                LastAssemblyLoadContext.Unload();
+                LastAssemblyLoadContext = null; // unloading will not occur while there are references to it
+            }
+            LastAssemblyLoadContext = new AssemblyLoadContext("snippet", true);
+
+            using var ms = new MemoryStream();
+            var e = compilation.Emit(ms);
+            if (!e.Success)
+            {
+                e.Diagnostics.ToList().ForEach(d => outputList.Add(d.ToString()));
+                return new RunCodeResult(string.Join("Failed to compile the code! Reason below:\n\n", outputList), false);
+            }
+            ms.Seek(0, SeekOrigin.Begin);
+            var ass = LastAssemblyLoadContext.LoadFromStream(ms);
+
+            MethodInfo? consolePrint = ass.GetReferencedAssemblies().SelectMany(asName =>
+            {
+                return Assembly.Load(asName.Name).GetTypes().SelectMany(t => t.GetMethods().Where(method => method.Name == "WriteLine"));
+            }).First();
+            if (consolePrint is null)
+            {
+                throw new InvalidOperationException("Couldn't get Console.WriteLine() method of compiled code");
+            }
+            var myMethod = typeof(System.Console).GetMethod("WriteLine", new Type[] { typeof(string) });
+            var myIL = myMethod.GetMethodBody().GetILAsByteArray();
+            //Array.Resize(ref consolePrint.GetMethodBody().GetILAsByteArray(), myIL.Length);
+            var harmony = new Harmony("write-line-patch");
+
+            // setup handler to unhook function when dynamic assembly is unloaded (because it seems that multiple assemblies referencing same function/class directly "contain it", and modifying one modifies it for all other assemblies, there's no jump to right place like in assembly, which would allow to ignore unpatching
+            //LastAssemblyLoadContext.Unloading += (context) => { harmony.Unpatch(consolePrint, patch); };
+            
+            //Injection.install(consolePrint!, myMethod);
+
+            // actually run generated assembly's code
+            MethodInfo? main = ass.EntryPoint;
+            if (main is not null)
+            {
+                // note: not only parameter types must match, parameter NAMES also need to be identical! (if you use them, can skip in patch method signature)
+                outputListForPatching = outputList;
+                var method = typeof(System.Console).GetMethod("WriteLine", new Type[] { typeof(string) });
+                var patch = harmony.Patch(method, new HarmonyMethod(PrefixHandler));
+                object? methodReturn = main.Invoke(null, new object[] { Array.Empty<string>() });
+                harmony.Unpatch(method, typeof(CodeSnippet).GetMethod("PrefixHandler"));
+                string results = string.Empty;
+                outputList.ForEach(s => results += s + "\n");
+                if (outputList.Count == 0)
+                {
+                    results += "<no output>";
+                }
+                return new RunCodeResult(results, true);
+            }
+            return new RunCodeResult("Could not execute entry point of this code", false);
+
+
+            //Console.WriteLine(methResult);
         }
 
         public RunCodeResult TryRunCode(bool persistEnvironment)
@@ -290,6 +472,11 @@ namespace SnippetManagerCore
                 case SnippetLanguage.Python:
                     {
                         LastRunCodeResult = TryRunPython(persistEnvironment);
+                        return LastRunCodeResult;
+                    }
+                case SnippetLanguage.Csharp:
+                    {
+                        LastRunCodeResult = TryRunCsharp();
                         return LastRunCodeResult;
                     }
                 case SnippetLanguage.All:
