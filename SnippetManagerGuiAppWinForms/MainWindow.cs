@@ -20,8 +20,10 @@ namespace SnippetManagerGuiAppWinForms
 
             newToolStripMenuItem.Click += (sender, e) => AddSnippet();
             newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
-            loadToolStripMenuItem.Click += (sender, e) => LoadFromFile();
+            loadToolStripMenuItem.Click += (sender, e) => LoadFromFile(false);
             loadToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+            loadAndAppendToolStripMenuItem.Click += (sender, e) => LoadFromFile(true);
+            loadAndAppendToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.O;
             saveToolStripMenuItem.Click += (sender, e) => SaveToFile(false);
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
             saveAsToolStripMenuItem.Click += (sender, e) => SaveToFile(true);
@@ -180,7 +182,7 @@ namespace SnippetManagerGuiAppWinForms
             }
         }
 
-        private void LoadFromFile()
+        private void LoadFromFile(bool append)
         {
             // show dialog to select file, call required method, handle exceptions (showing message box), then update snippets list
             using (OpenFileDialog ofd = new()
@@ -201,12 +203,22 @@ namespace SnippetManagerGuiAppWinForms
                         {
                             DataViewSnippetList.Rows[selectedIndex].Selected = false;
                         }
-                        Snippets.Clear();
-                        Snippets.LoadFromFile(ofd.FileName);
+                        if (append)
+                        {
+                            Snippets.AppendFromFile(ofd.FileName);
+                        }
+                        else
+                        {
+                            Snippets.Clear();
+                            Snippets.LoadFromFile(ofd.FileName);
+                        }
                         BindingSourceSnippetList.ResetBindings(false);
                         ApplyFilters();
-                        LastSavedFilePath = ofd.FileName;
-                        AppendToBasicWindowText(ofd.FileName);
+                        if (!append)
+                        {
+                            LastSavedFilePath = ofd.FileName;
+                            AppendToBasicWindowText(ofd.FileName);
+                        }
                     }
                     catch (SnippetLoadingException e)
                     {

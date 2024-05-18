@@ -356,6 +356,7 @@ namespace SnippetManagerCore
         }
 
         static AssemblyLoadContext LastAssemblyLoadContext = new AssemblyLoadContext(null, true);
+        // note: hooking Console.WriteLine for now only works with strings
         public RunCodeResult TryRunCsharp()
         {
             var provider = new Microsoft.CSharp.CSharpCodeProvider();

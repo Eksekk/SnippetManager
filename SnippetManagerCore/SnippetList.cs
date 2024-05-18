@@ -125,14 +125,13 @@ namespace SnippetManagerCore
         {
         }
 
-        public void LoadFromFile(string filename)
+        private SnippetList LoadFromFileCommon(string filename)
         {
             try
             {
                 using FileStream f = File.Open(filename, FileMode.Open);
                 SnippetList? l = JsonSerializer.Deserialize(f, typeof(SnippetList)) as SnippetList;
-                this.Clear();
-                this.AddRange(l ?? new());
+                return l ?? new();
             }
             catch (JsonException e)
             {
@@ -142,6 +141,24 @@ namespace SnippetManagerCore
             {
                 throw new exceptions.SnippetLoadingException($"IO error while loading snippets from file '{filename}': {e.Message}", e);
             }
+        }
+
+        public void LoadFromFile(string filename)
+        {
+            var l = LoadFromFileCommon(filename);
+            this.Clear();
+            this.AddRange(l);
+        }
+
+        public static SnippetList LoadFromFileStatic(string filename)
+        {
+            return new SnippetList().LoadFromFileCommon(filename);
+        }
+
+        public void AppendFromFile(string filename)
+        {
+            var l = LoadFromFileCommon(filename);
+            this.AddRange(l);
         }
 
         public void SaveToFile(string filename)
