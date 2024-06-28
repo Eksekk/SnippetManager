@@ -67,6 +67,7 @@ namespace SnippetManagerGuiAppWinForms
         private void UpdateControlsFromSnippet(CodeSnippet s)
         {
             // fill the form with the snippet data
+            TextBoxName.Text = s.Name;
             GuiHelpers.SelectComboBoxOption(ComboBoxLanguage, s.Lang);
             GuiHelpers.SelectComboBoxOption(ComboBoxComplexity, s.Complexity);
             GuiHelpers.SelectComboBoxOption(ComboBoxType, s.Types[0]);
@@ -127,7 +128,9 @@ namespace SnippetManagerGuiAppWinForms
             CodeSnippet.Lang = ComboBoxSelectedItem<SnippetLanguage>(ComboBoxLanguage);
             CodeSnippet.Complexity = ComboBoxSelectedItem<SnippetComplexity>(ComboBoxComplexity);
             CodeSnippet.Types = new() { ComboBoxSelectedItem<SnippetType>(ComboBoxType) };
+            CodeSnippet.Name = TextBoxName.Text;
             CodeSnippet.Content = TextBoxCode.Text;
+            CodeSnippet.IsRunnable = CheckBoxIsRunnable.Checked;
             if (CheckBoxExtendedDescription.Checked)
             {
                 CodeSnippet.ExtendedDesc = new()

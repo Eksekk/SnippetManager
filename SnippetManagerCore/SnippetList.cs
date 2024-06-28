@@ -37,7 +37,7 @@ namespace SnippetManagerCore
                 {
                     strings.Add(o.ToString());
                 }
-                return "[" + string.Join(", ", strings.ToArray()) + "]";
+                return $"[{string.Join(", ", strings.ToArray())}]";
             }
             return base.ConvertTo(context, culture, value, destinationType);
         }
@@ -161,6 +161,14 @@ namespace SnippetManagerCore
             this.AddRange(l);
         }
 
+        public delegate void SnippetLoadCallbackType(SnippetList me, SnippetList loaded);
+
+        public void LoadFromFileAndExecute(string filename, SnippetLoadCallbackType callback)
+        {
+            var l = LoadFromFileCommon(filename);
+            callback(this, l);
+        }
+
         public void SaveToFile(string filename)
         {
             try
@@ -173,6 +181,23 @@ namespace SnippetManagerCore
                 var newExp = new exceptions.SnippetSavingException($"JSON error while saving snippets to file '{filename}': {e.Message}", e);
                 Debug.WriteLine(newExp.StackTrace);
                 throw newExp;
+            }
+            catch (IOException e)
+            {
+                var newExp = new exceptions.SnippetSavingException($"IO error while saving snippets to file '{filename}': {e.Message}", e);
+                Debug.WriteLine(newExp.StackTrace);
+                throw newExp;
+            }
+        }
+
+        public delegate void SnippetSaveCallbackType(SnippetList me, FileStream file);
+
+        public void SaveToFileCustom(string filename, SnippetSaveCallbackType callback)
+        {
+            try
+            {
+                using FileStream f = File.Open(filename, FileMode.Create);
+                callback(this, f);
             }
             catch (IOException e)
             {

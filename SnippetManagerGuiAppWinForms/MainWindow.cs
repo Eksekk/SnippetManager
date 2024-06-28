@@ -79,7 +79,6 @@ namespace SnippetManagerGuiAppWinForms
 
             // setup handler to show collection's elements instead of "(Collection)" text
             DataViewSnippetList.CellFormatting += CellFormatting;
-
             // update snippet text before selecting another row in table
             DataViewSnippetList.RowLeave += (sender, e) => UpdateSnippetContentFromTextbox();
             // and also when user modifies code in textbox (to run correct script when text is changed without selecting another snippet)

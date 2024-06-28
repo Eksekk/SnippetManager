@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using System.Text.Json.Serialization;
-using static IronPython.Modules.PythonWeakRef;
 
 namespace SnippetManagerCore
 {
@@ -100,7 +99,7 @@ namespace SnippetManagerCore
         // this only shows if snippet is suitable for and was intended to be instantly testable, language also affects this (C++ snippets won't be runnable for example, because I won't bundle and integrate C++ compiler)
         public bool IsRunnable { get; set; }
 
-        public RunCodeResult LastRunCodeResult { get; set; }
+        public RunCodeResult LastRunCodeResult { get; private set; }
 
         public CodeSnippet()
         {
@@ -274,10 +273,10 @@ namespace SnippetManagerCore
             }
             dynamic pythonGlobals = pythonScope;
             string output = "";
-            pythonGlobals.print = new MyPythonPrint((args =>
+            pythonGlobals.print = new MyPythonPrint(args =>
             {
                 output += string.Join("\t", args) + "\n";
-            }));
+            });
             try
             {
                 ScriptSource source = pythonEngine.CreateScriptSourceFromString(Content);
