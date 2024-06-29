@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SnippetManagerCore.exceptions.SnippetLoadingException" Collapsed="true">
+    <Position X="2.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>exceptions\SnippetLoadingException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.exceptions.SnippetSavingException" Collapsed="true">
+    <Position X="4.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>exceptions\SnippetSavingException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.CodeSnippet" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAQIgQBoIAIAAGgABAAEWAAUAAQAAABAACAABAA3A=</HashCode>
+      <FileName>CodeSnippet.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SnippetManagerCore.EnumHelpers" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EnumHelpers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.EnumTextAttribute" Collapsed="true">
+    <Position X="2.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>EnumTextAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.ExampleSnippets" Collapsed="true">
+    <Position X="4.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExampleSnippets.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.CollectionToStringTypeConverter" Collapsed="true">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAACAAAAIAAAAAAAA=</HashCode>
+      <FileName>SnippetList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.SnippetList" Collapsed="true">
+    <Position X="6.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAgAAAIIAAAAAEAAIAQAgAAAAACAAAABAAAEAA=</HashCode>
+      <FileName>SnippetList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerCore.Tools" Collapsed="true">
+    <Position X="6.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAIACAQAAAgOEBAAACAAQBAAAAIAAAAAAIAAghAAAA=</HashCode>
+      <FileName>Tools.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SnippetManagerCore.SnippetExtendedDescription" Collapsed="true">
+    <Position X="2.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAiA=</HashCode>
+      <FileName>CodeSnippet.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="SnippetManagerCore.ThreeValueEnum" Collapsed="true">
+    <Position X="2.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeSnippet.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SnippetManagerCore.SnippetLanguage" Collapsed="true">
+    <Position X="4.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAIAIAAAACAAAA=</HashCode>
+      <FileName>CodeSnippet.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SnippetManagerCore.SnippetComplexity" Collapsed="true">
+    <Position X="2.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAgAAAAAAAAgAAAAAAIAAAAAECAA=</HashCode>
+      <FileName>CodeSnippet.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SnippetManagerCore.SnippetType" Collapsed="true">
+    <Position X="6.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAgAAAQAAAAAAAAAAAAAgAAAEAAAAAAAIQAAAA=</HashCode>
+      <FileName>CodeSnippet.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SnippetManagerGuiAppWinForms.Properties.Resources" Collapsed="true">
+    <Position X="5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.AddEditSnippetWindow" Collapsed="true">
+    <Position X="3.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACCAASEQASQAAgAAABCEhAACAAQhgEkgACAgIgIIACA=</HashCode>
+      <FileName>AddEditSnippetWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.ExtensionMethods" Collapsed="true">
+    <Position X="5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAEAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExtensionMethods.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.FindDialog" Collapsed="true">
+    <Position X="6.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAACAAAAAAAgCAAAACAAQAAAIAAAARAAAAEAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.GuiHelpers" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAQAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GuiHelpers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.MainWindow" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BQhANgAgECgRARgIAECSpENDiAAJAAEAIgMgRjABQAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.MyScintillaControl" Collapsed="true">
+    <Position X="6.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MyScintillaControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SnippetManagerGuiAppWinForms.Program" Collapsed="true">
+    <Position X="3.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
